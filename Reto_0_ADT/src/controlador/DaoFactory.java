@@ -5,10 +5,6 @@
  */
 package controlador;
 
-/**
- *
- * @author 2dam
- */
 public class DaoFactory {
 
 }

@@ -1,24 +1,18 @@
-
-import vista.VistaConsola;
-
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
+package modelo;
 
 /**
  *
  * @author 2dam
  */
-public class Principal {
+public enum Dificultad {
+    ALTA, MEDIA, BAJA;
 
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String[] args) {
-        new VistaConsola();
+    public static Dificultad introducirTipoElaboracion(String texto) {
+        return Dificultad.valueOf(texto);
     }
-
 }
