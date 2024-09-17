@@ -27,6 +27,7 @@ public class ImplementacionDB implements IDao {
     private PreparedStatement declaracion;
 
     private final String CONSULTA_TODO = "SELECT * FROM UNIDADDIDACTICA";
+    private final String INSERCION_EJEMPLO = "INSERT INTO unidaddidactica VALUES (?,?,?,?,?)";
 
     public ImplementacionDB() {
         fichConf = ResourceBundle.getBundle("modelo.dbConfig");
@@ -54,7 +55,7 @@ public class ImplementacionDB implements IDao {
         }
     }
 
-
+    //Ejemplo para que todo funcionaba correctamente la conexion
     @Override
     public List<UnidadDidactica> get() {
         UnidadDidactica unidad;
@@ -84,5 +85,22 @@ public class ImplementacionDB implements IDao {
         return lista;
     }
 
+    @Override
+    public void crearUnidadDidactica(UnidadDidactica unidad) throws SQLException {
+        ResultSet resultado;
+        try {
+            openConnection();
+            //Preparamos la insercion con la sql de arriba
+            declaracion = conexion.prepareStatement(INSERCION_EJEMPLO);
+            declaracion.setInt(1, unidad.getId());
+            declaracion.setString(2, unidad.getAcronimo());
+            declaracion.setString(3, unidad.getTitulo());
+            declaracion.setString(4, unidad.getEvaluacion());
+            declaracion.setString(5, unidad.getDescripcion());
+            declaracion.executeUpdate();
+        } finally {
+            closeConnection();
+        }
+    }
 
 }

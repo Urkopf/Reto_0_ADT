@@ -5,6 +5,7 @@
  */
 package controlador;
 
+import java.sql.SQLException;
 import java.util.List;
 import modelo.UnidadDidactica;
 
@@ -15,4 +16,6 @@ import modelo.UnidadDidactica;
 public interface IDao {
 
     public List<UnidadDidactica> get();
+
+    public void crearUnidadDidactica(UnidadDidactica unidad) throws SQLException;
 }
