@@ -1,4 +1,6 @@
+package controlador;
 
+import modelo.ImplementacionDB;
 import vista.VistaConsola;
 
 /*
@@ -18,7 +20,8 @@ public class Principal {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        new VistaConsola();
+        IDao dao = new ImplementacionDB();
+        VistaConsola vista = new VistaConsola(dao);
     }
 
 }

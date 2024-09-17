@@ -5,6 +5,9 @@
  */
 package vista;
 
+import controlador.IDao;
+import java.util.List;
+import modelo.UnidadDidactica;
 import utilidades.Utilidades;
 
 /**
@@ -13,19 +16,20 @@ import utilidades.Utilidades;
  */
 public class VistaConsola {
 
-    public VistaConsola() {
-        opcion1();
-    }
+    private IDao dao;
 
-    private void opcion1() {
-        int opc;
+    public VistaConsola(IDao dao) {
+        this.dao = dao;
+        Integer opc;
         do {
             interfaz();
             opc = Utilidades.introducirInteger("Introduzca una opcion valida: ");
             switch (opc) {
                 case 1:
+                    consulta();
                     break;
                 case 2:
+                    System.out.println("HastaLuego");
                     break;
                 case 3:
                     System.out.println("Agur");
@@ -48,5 +52,12 @@ public class VistaConsola {
         System.out.println("                 Opcion               ");
     }
 
+    private void consulta() {
+        List<UnidadDidactica> mis_unidades;
+        mis_unidades = dao.get();
+        for (UnidadDidactica unidad : mis_unidades) {
+            System.out.println(unidad);
+        }
+    }
 
 }

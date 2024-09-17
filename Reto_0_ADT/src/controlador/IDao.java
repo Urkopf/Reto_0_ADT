@@ -3,12 +3,16 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package dao;
+package controlador;
+
+import java.util.List;
+import modelo.UnidadDidactica;
 
 /**
  *
  * @author 2dam
  */
-public class ImplementacionArchivo {
+public interface IDao {
 
+    public List<UnidadDidactica> get();
 }
