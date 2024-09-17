@@ -1,5 +1,6 @@
 package controlador;
 
+import java.sql.SQLException;
 import modelo.ImplementacionDB;
 import vista.VistaConsola;
 
@@ -19,7 +20,7 @@ public class Principal {
     /**
      * @param args the command line arguments
      */
-    public static void main(String[] args) {
+    public static void main(String[] args) throws SQLException {
         IDao dao = new ImplementacionDB();
         VistaConsola vista = new VistaConsola(dao);
     }
