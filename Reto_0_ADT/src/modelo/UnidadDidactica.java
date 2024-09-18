@@ -5,26 +5,32 @@
  */
 package modelo;
 
+import java.util.Map;
+import java.util.TreeMap;
+
 /**
  *
  * @author 2dam
  */
 public class UnidadDidactica {
-    private Integer id;
+
+    private Integer idUnidad;
     private String acronimo;
     private String titulo;
     private String evaluacion;
     private String descripcion;
+    private Map<Integer, Enunciado> listaUnidades;
 
     public UnidadDidactica() {
+        listaUnidades = new TreeMap<>();
     }
 
-    public Integer getId() {
-        return id;
+    public Integer getidUnidad() {
+        return idUnidad;
     }
 
-    public void setId(Integer id) {
-        this.id = id;
+    public void setidUnidad(Integer idUnidad) {
+        this.idUnidad = idUnidad;
     }
 
     public String getAcronimo() {
@@ -59,9 +65,17 @@ public class UnidadDidactica {
         this.descripcion = descripcion;
     }
 
+    public Map<Integer, Enunciado> getListaUnidades() {
+        return listaUnidades;
+    }
+
+    public void setListaUnidades(Map<Integer, Enunciado> listaUnidades) {
+        this.listaUnidades = listaUnidades;
+    }
+
     @Override
     public String toString() {
-        return "UnidadDidactica{" + "id=" + id + ", acronimo=" + acronimo + ", titulo=" + titulo + ", evaluacion=" + evaluacion + ", descripcion=" + descripcion + '}';
+        return "UnidadDidactica{" + "idUnidad=" + idUnidad + ", acronimo=" + acronimo + ", titulo=" + titulo + ", evaluacion=" + evaluacion + ", descripcion=" + descripcion + ", listaUnidades=" + listaUnidades + '}';
     }
 
 }

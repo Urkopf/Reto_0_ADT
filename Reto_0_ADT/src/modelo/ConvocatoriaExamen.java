@@ -13,7 +13,7 @@ import java.time.LocalDate;
  */
 public class ConvocatoriaExamen {
 
-    private Integer id;
+    private Integer idConvocatoria;
     private String convocatoria;
     private String descripcion;
     private LocalDate fecha;
@@ -22,12 +22,12 @@ public class ConvocatoriaExamen {
     public ConvocatoriaExamen() {
     }
 
-    public Integer getId() {
-        return id;
+    public Integer getidConvocatoria() {
+        return idConvocatoria;
     }
 
-    public void setId(Integer id) {
-        this.id = id;
+    public void setidConvocatoria(Integer idConvocatoria) {
+        this.idConvocatoria = idConvocatoria;
     }
 
     public String getConvocatoria() {
@@ -64,8 +64,7 @@ public class ConvocatoriaExamen {
 
     @Override
     public String toString() {
-        return "ConvocatoriaExamen{" + "id=" + id + ", convocatoria=" + convocatoria + ", descripcion=" + descripcion + ", fecha=" + fecha + ", curso=" + curso + '}';
+        return "ConvocatoriaExamen{" + "idConvocatoria=" + idConvocatoria + ", convocatoria=" + convocatoria + ", descripcion=" + descripcion + ", fecha=" + fecha + ", curso=" + curso + '}';
     }
-
 
 }

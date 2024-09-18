@@ -66,7 +66,7 @@ public class VistaConsola {
         System.out.println("Introduce los campos: ");
         UnidadDidactica unidad = new UnidadDidactica();
         //Cuidado ejemplo para id de manera manual
-        unidad.setId(2);
+        unidad.setidUnidad(2);
         acronimo = Utilidades.introducirCadena("Introduce el acronimo:");
         unidad.setAcronimo(acronimo);
         titulo = Utilidades.introducirCadena("Introduce el titulo:");

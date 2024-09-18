@@ -5,27 +5,34 @@
  */
 package modelo;
 
+import java.util.Map;
+import java.util.TreeMap;
+
 /**
  *
  * @author 2dam
  */
 public class Enunciado {
 
-    private Integer id;
+    private Integer idEnunciado;
     private String descripcion;
     private Enum dificultad;
     private Boolean disponible;
     private String ruta;
+    private Map<Integer, UnidadDidactica> listaUnidades;
+    private Map<Integer, ConvocatoriaExamen> listaConvocatorias;
 
     public Enunciado() {
+        listaUnidades = new TreeMap<>();
+        listaConvocatorias = new TreeMap<>();
     }
 
-    public Integer getId() {
-        return id;
+    public Integer getidEnunciado() {
+        return idEnunciado;
     }
 
-    public void setId(Integer id) {
-        this.id = id;
+    public void setidEnunciado(Integer idEnunciado) {
+        this.idEnunciado = idEnunciado;
     }
 
     public String getDescripcion() {
@@ -60,10 +67,25 @@ public class Enunciado {
         this.ruta = ruta;
     }
 
-    @Override
-    public String toString() {
-        return "Enunciado{" + "id=" + id + ", descripcion=" + descripcion + ", dificultad=" + dificultad + ", disponible=" + disponible + ", ruta=" + ruta + '}';
+    public Map<Integer, UnidadDidactica> getListaUnidades() {
+        return listaUnidades;
     }
 
+    public void setListaUnidades(Map<Integer, UnidadDidactica> listaUnidades) {
+        this.listaUnidades = listaUnidades;
+    }
+
+    public Map<Integer, ConvocatoriaExamen> getListaConvocatorias() {
+        return listaConvocatorias;
+    }
+
+    public void setListaConvocatorias(Map<Integer, ConvocatoriaExamen> listaConvocatorias) {
+        this.listaConvocatorias = listaConvocatorias;
+    }
+
+    @Override
+    public String toString() {
+        return "Enunciado{" + "idEnunciado=" + idEnunciado + ", descripcion=" + descripcion + ", dificultad=" + dificultad + ", disponible=" + disponible + ", ruta=" + ruta + ", listaUnidades=" + listaUnidades + ", listaConvocatorias=" + listaConvocatorias + '}';
+    }
 
 }

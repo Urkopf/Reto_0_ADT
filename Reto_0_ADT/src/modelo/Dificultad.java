@@ -11,8 +11,4 @@ package modelo;
  */
 public enum Dificultad {
     ALTA, MEDIA, BAJA;
-
-    public static Dificultad introducirTipoElaboracion(String texto) {
-        return Dificultad.valueOf(texto);
-    }
 }

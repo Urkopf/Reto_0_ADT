@@ -68,7 +68,7 @@ public class ImplementacionDB implements IDao {
             resultado = declaracion.executeQuery();
             while (resultado.next()) {
                 unidad = new UnidadDidactica();
-                unidad.setId(resultado.getInt("ID"));
+                unidad.setidUnidad(resultado.getInt("ID"));
                 unidad.setAcronimo(resultado.getString("ACRONIMO"));
                 unidad.setTitulo(resultado.getString("TITULO"));
                 unidad.setEvaluacion(resultado.getString("EVALUACION"));
@@ -92,7 +92,7 @@ public class ImplementacionDB implements IDao {
             openConnection();
             //Preparamos la insercion con la sql de arriba
             declaracion = conexion.prepareStatement(INSERCION_EJEMPLO);
-            declaracion.setInt(1, unidad.getId());
+            declaracion.setInt(1, unidad.getidUnidad());
             declaracion.setString(2, unidad.getAcronimo());
             declaracion.setString(3, unidad.getTitulo());
             declaracion.setString(4, unidad.getEvaluacion());
