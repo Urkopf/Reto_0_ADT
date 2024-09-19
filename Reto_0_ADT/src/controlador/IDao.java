@@ -5,7 +5,6 @@
  */
 package controlador;
 
-import java.util.List;
 import java.util.Map;
 import modelo.ConvocatoriaExamen;
 import modelo.Enunciado;
@@ -17,9 +16,9 @@ import modelo.UnidadDidactica;
  */
 public interface IDao {
 
-    public List<UnidadDidactica> get();
+    //public List<UnidadDidactica> get();
 
-    public void crearUnidadDidactica(UnidadDidactica unidad);
+    //public void crearUnidadDidactica(UnidadDidactica unidad);
 
     public void insertarUnidadDidactica(UnidadDidactica unidad);
 
