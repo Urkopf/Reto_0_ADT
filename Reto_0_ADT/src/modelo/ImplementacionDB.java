@@ -9,10 +9,7 @@ import controlador.IDao;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
 
@@ -55,7 +52,7 @@ public class ImplementacionDB implements IDao {
             evento.printStackTrace();
         }
     }
-
+    /*
     //Ejemplo para que todo funcionaba correctamente la conexion
     @Override
     public List<UnidadDidactica> get() {
@@ -87,7 +84,7 @@ public class ImplementacionDB implements IDao {
     }
 
     @Override
-    public void crearUnidadDidactica(UnidadDidactica unidad) throws SQLException {
+    public void crearUnidadDidactica(UnidadDidactica unidad) {
         ResultSet resultado;
         try {
             openConnection();
@@ -99,11 +96,13 @@ public class ImplementacionDB implements IDao {
             declaracion.setString(4, unidad.getEvaluacion());
             declaracion.setString(5, unidad.getDescripcion());
             declaracion.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
         } finally {
             closeConnection();
         }
     }
-
+    */
     @Override
     public void insertarUnidadDidactica(UnidadDidactica unidad) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.

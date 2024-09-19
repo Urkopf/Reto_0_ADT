@@ -8,8 +8,6 @@ package vista;
 import controlador.IDao;
 import controlador.IVista;
 import java.sql.SQLException;
-import java.util.List;
-import modelo.UnidadDidactica;
 import utilidades.Utilidades;
 
 /**
@@ -36,7 +34,7 @@ public class VistaConsola implements IVista {
         System.out.println("--------------------------------------");
         System.out.println("                 Opcion               ");
     }
-
+    /*
     private void consulta() {
         List<UnidadDidactica> mis_unidades;
         mis_unidades = dao.get();
@@ -45,7 +43,7 @@ public class VistaConsola implements IVista {
         }
     }
 
-    private void insercionUnidadDidactica() throws SQLException {
+    private void insercionUnidadDidactica() {
         String acronimo, titulo, evaluacion, descripcion;
         System.out.println("Introduce los campos: ");
         UnidadDidactica unidad = new UnidadDidactica();
@@ -63,19 +61,17 @@ public class VistaConsola implements IVista {
         dao.crearUnidadDidactica(unidad);
         System.out.println("Todo Bien!!!");
     }
-
+    */
     @Override
     public void visualizaMenu() {
         Integer opc;
         do {
-            interfaz();
+            menu();
             opc = Utilidades.introducirInteger("Introduzca una opcion valida: ");
             switch (opc) {
                 case 1:
-                    consulta();
                     break;
                 case 2:
-                    insercionUnidadDidactica();
                     break;
                 case 3:
                     System.out.println("Agur");
