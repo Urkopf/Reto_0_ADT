@@ -6,6 +6,7 @@
 package vista;
 
 import controlador.IDao;
+import controlador.IVista;
 import java.sql.SQLException;
 import java.util.List;
 import modelo.UnidadDidactica;
@@ -15,33 +16,16 @@ import utilidades.Utilidades;
  *
  * @author 2dam
  */
-public class VistaConsola {
+public class VistaConsola implements IVista {
 
     private IDao dao;
 
     public VistaConsola(IDao dao) throws SQLException {
         this.dao = dao;
-        Integer opc;
-        do {
-            interfaz();
-            opc = Utilidades.introducirInteger("Introduzca una opcion valida: ");
-            switch (opc) {
-                case 1:
-                    consulta();
-                    break;
-                case 2:
-                    insercionUnidadDidactica();
-                    break;
-                case 3:
-                    System.out.println("Agur");
-                    break;
-                default:
-                    System.out.println("Opcion incorrecta");
-            }
-        } while (opc != 3);
+        visualizaMenu();
     }
 
-    private void interfaz() {
+    private void menu() {
 
         System.out.println("--------------------------------------");
         System.out.println("             MENU OPCION              ");
@@ -78,6 +62,58 @@ public class VistaConsola {
 
         dao.crearUnidadDidactica(unidad);
         System.out.println("Todo Bien!!!");
+    }
+
+    @Override
+    public void visualizaMenu() {
+        Integer opc;
+        do {
+            interfaz();
+            opc = Utilidades.introducirInteger("Introduzca una opcion valida: ");
+            switch (opc) {
+                case 1:
+                    consulta();
+                    break;
+                case 2:
+                    insercionUnidadDidactica();
+                    break;
+                case 3:
+                    System.out.println("Agur");
+                    break;
+                default:
+                    System.out.println("Opcion incorrecta");
+            }
+        } while (opc != 3);
+    }
+
+    @Override
+    public void opcionCrearUnidadYConvocatoria() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void opcionCrearEnunciado() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void opcionConsultaEnunciadosDeUnidad() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void opcionConsultaConvocatoriasConEnunciado() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void opcionVisualizaDocumento() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void opcionAsignarEnunciadoAConvocatoria() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
 }
