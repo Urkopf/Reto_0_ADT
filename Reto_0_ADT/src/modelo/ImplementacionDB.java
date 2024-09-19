@@ -9,9 +9,13 @@ import controlador.IDao;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
+import java.util.TreeMap;
 
 /**
  *
@@ -25,7 +29,15 @@ public class ImplementacionDB implements IDao {
     private PreparedStatement declaracion;
 
     private final String CONSULTA_TODO = "SELECT * FROM UNIDADDIDACTICA";
-    private final String INSERCION_EJEMPLO = "INSERT INTO unidaddidactica VALUES (?,?,?,?,?)";
+    private final String INSERCION_EJEMPLO = "INSERT INTO UNIDADDIDACTICA VALUES (?,?,?,?,?)";
+
+    private final String CONSULTA_TODOS_ENUNCIADOS = "SELECT * FROM ENUNCIADO";
+    private final String CONSULTA_LISTA_IDS_UNIDADES_DE_ENUNCIADO = "SELECT UNIDADID AS ID FROM UNIDADENUNCIADO WHERE ENUNCIADOID = ?";
+    private final String CONSULTA_LISTA_IDS_CONVOCATORIAS_DE_ENUNCIADO = "SELECT ID FROM CONVOCATORIAEXAMEN WHERE ENUNCIADOID = ?";
+    private final String CONSULTA_LISTA_IDS_ENUNCIADOS_DE_UNIDAD = "SELECT ENUNCIADOID  AS ID FROM UNIDADENUNCIADO WHERE UNIDADID = ?";
+    private final String CONSULTA_TODAS_CONVOCATORIAS_EXAMEN = "SELECT * FROM CONVOCATORIAEXAMEN";
+    private final String CONSULTA_CONVOCATORIAS_EXAMEN_DE_ENUNCIADO = "SELECT * FROM CONVOCATORIAEXAMEN WHERE ENUNCIADOSID = ?";
+    private final String UPDATE_CONVOCATORIA = "UPDATE CONVOCATORIAEXAMEN SET ENUNCIADOID = ? WHERE ID = ?";
 
     public ImplementacionDB() {
         fichConf = ResourceBundle.getBundle("modelo.dbConfig");
@@ -123,24 +135,259 @@ public class ImplementacionDB implements IDao {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
+    /**
+     * Método que carga todos los enunciados disponibles en la base de datos.
+     * Devuelve los enunciados en un mapa ordenado por su identificador.
+     *
+     * @return Un {@code TreeMap<Integer, Enunciado>} que contiene todos los
+     * enunciados donde la clave es el ID del enunciado y el valor es el objeto
+     * {@code Enunciado}.
+     */
     @Override
-    public Map<Integer, Enunciado> cargarEnunciados() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public TreeMap<Integer, Enunciado> cargarEnunciados() {
+        Enunciado enunciado;
+        TreeMap<Integer, Enunciado> lista = new TreeMap<>();
+        ResultSet resultado;
+
+        try {
+            // Abrimos la conexión con la base de datos
+            openConnection();
+
+            // Preparamos la consulta para obtener todos los enunciados
+            declaracion = conexion.prepareStatement(CONSULTA_TODOS_ENUNCIADOS);
+
+            // Ejecutamos la consulta y obtenemos el resultado
+            resultado = declaracion.executeQuery();
+
+            // Recorremos los resultados de la consulta
+            while (resultado.next()) {
+                enunciado = new Enunciado();
+
+                // Asignamos los valores del ResultSet al objeto Enunciado
+                enunciado.setIdEnunciado(resultado.getInt("ID"));
+                enunciado.setDescripcion(resultado.getString("DESCRIPCION"));
+                enunciado.setDificultad(Dificultad.convertirStringEnum(resultado.getString("DIFICULTAD")));
+                enunciado.setRuta(resultado.getString("RUTA"));
+
+                // Cargamos las unidades asociadas al enunciado
+                enunciado.setListaUnidades(consultaListaIds(enunciado.getIdEnunciado(), "unidades"));
+
+                // Cargamos las convocatorias asociadas al enunciado
+                enunciado.setListaConvocatorias(consultaListaIds(enunciado.getIdEnunciado(), "convocatorias"));
+
+                // Añadimos el enunciado al TreeMap
+                lista.put(enunciado.getIdEnunciado(), enunciado);
+            }
+
+        } catch (SQLException evento) {
+            // Manejamos la excepción en caso de fallo en la consulta
+            evento.printStackTrace();
+        } finally {
+            // Cerramos la conexión con la base de datos
+            closeConnection();
+        }
+
+        // Devolvemos el TreeMap con los enunciados
+        return lista;
     }
 
+
+    /**
+     * Método que carga todas las convocatorias de examen disponibles en la base
+     * de datos. Devuelve un mapa ordenado por el identificador de la
+     * convocatoria.
+     *
+     * @return Un {@code TreeMap<Integer, ConvocatoriaExamen>} que contiene
+     * todas las convocatorias donde la clave es el ID de la convocatoria y el
+     * valor es el objeto {@code ConvocatoriaExamen}.
+     */
     @Override
     public Map<Integer, ConvocatoriaExamen> cargarConvocatoriasExamen() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        ConvocatoriaExamen convocatoria;
+        TreeMap<Integer, ConvocatoriaExamen> lista = new TreeMap<>();
+        ResultSet resultado;
+
+        try {
+            // Abrimos la conexión con la base de datos
+            openConnection();
+
+            // Preparamos la consulta para obtener todas las convocatorias
+            declaracion = conexion.prepareStatement(CONSULTA_TODAS_CONVOCATORIAS_EXAMEN);
+
+            // Ejecutamos la consulta y obtenemos el resultado
+            resultado = declaracion.executeQuery();
+
+            // Recorremos los resultados de la consulta
+            while (resultado.next()) {
+                convocatoria = new ConvocatoriaExamen();
+
+                // Asignamos los valores del ResultSet al objeto ConvocatoriaExamen
+                convocatoria.setIdConvocatoria(resultado.getInt("ID"));
+                convocatoria.setConvocatoria(resultado.getString("CONVOCATORIA"));
+                convocatoria.setDescripcion(resultado.getString("DESCRIPCION"));
+                convocatoria.setFecha(resultado.getDate("FECHA").toLocalDate());
+                convocatoria.setCurso(resultado.getString("CURSO"));
+                convocatoria.setIdEnunciado(resultado.getInt("IDENUNCIADO"));
+
+                // Añadimos la convocatoria al TreeMap
+                lista.put(convocatoria.getIdConvocatoria(), convocatoria);
+            }
+
+        } catch (SQLException evento) {
+            // Manejamos la excepción en caso de fallo en la consulta
+            evento.printStackTrace();
+        } finally {
+            // Cerramos la conexión con la base de datos
+            closeConnection();
+        }
+
+        // Devolvemos el TreeMap con las convocatorias
+        return lista;
     }
 
+    /**
+     * Método que consulta todas las convocatorias asociadas a un enunciado en
+     * particular.
+     *
+     * @param idEnunciado El identificador del enunciado para el cual se desean
+     * consultar las convocatorias.
+     * @return Un {@code TreeMap<Integer, ConvocatoriaExamen>} que contiene
+     * todas las convocatorias relacionadas con el enunciado especificado.
+     */
     @Override
     public Map<Integer, ConvocatoriaExamen> consultaEnunciadoConvocatoria(Integer idEnunciado) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        ConvocatoriaExamen convocatoria;
+        TreeMap<Integer, ConvocatoriaExamen> lista = new TreeMap<>();
+        ResultSet resultado;
+
+        try {
+            // Abrimos la conexión con la base de datos
+            openConnection();
+
+            // Preparamos la consulta para obtener las convocatorias del enunciado
+            declaracion = conexion.prepareStatement(CONSULTA_CONVOCATORIAS_EXAMEN_DE_ENUNCIADO);
+
+            // Asignamos el valor del parámetro idEnunciado
+            declaracion.setInt(1, idEnunciado);
+
+            // Ejecutamos la consulta y obtenemos el resultado
+            resultado = declaracion.executeQuery();
+
+            // Recorremos los resultados de la consulta
+            while (resultado.next()) {
+                convocatoria = new ConvocatoriaExamen();
+
+                // Asignamos los valores del ResultSet al objeto ConvocatoriaExamen
+                convocatoria.setIdConvocatoria(resultado.getInt("ID"));
+                convocatoria.setConvocatoria(resultado.getString("CONVOCATORIA"));
+                convocatoria.setDescripcion(resultado.getString("DESCRIPCION"));
+                convocatoria.setFecha(resultado.getDate("FECHA").toLocalDate());
+                convocatoria.setCurso(resultado.getString("CURSO"));
+                convocatoria.setIdEnunciado(resultado.getInt("IDENUNCIADO"));
+
+                // Añadimos la convocatoria al TreeMap
+                lista.put(convocatoria.getIdConvocatoria(), convocatoria);
+            }
+
+        } catch (SQLException evento) {
+            // Manejamos la excepción en caso de fallo en la consulta
+            evento.printStackTrace();
+        } finally {
+            // Cerramos la conexión con la base de datos
+            closeConnection();
+        }
+
+        // Devolvemos el TreeMap con las convocatorias
+        return lista;
     }
 
+
+    /**
+     * Método que actualiza una convocatoria asignando un enunciado a ella.
+     *
+     * @param idEnunciado El identificador del enunciado que se quiere asociar a
+     * la convocatoria.
+     * @param idConvocatoria El identificador de la convocatoria que se va a
+     * actualizar.
+     */
     @Override
     public void agregarConvocatoriaEnunciado(Integer idEnunciado, Integer idConvocatoria) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        try {
+            // Abrimos la conexión con la base de datos
+            openConnection();
+
+            // Preparamos la sentencia SQL para actualizar la convocatoria
+            declaracion = conexion.prepareStatement(UPDATE_CONVOCATORIA);
+
+            // Asignamos los valores de los parámetros
+            declaracion.setInt(1, idEnunciado);
+            declaracion.setInt(2, idConvocatoria);
+
+            // Ejecutamos la actualización
+            declaracion.executeUpdate();
+
+        } catch (SQLException e) {
+            // Manejamos la excepción en caso de fallo en la actualización
+            e.printStackTrace();
+        } finally {
+            // Cerramos la conexión con la base de datos
+            closeConnection();
+        }
+    }
+
+    
+    /**
+     * Método que consulta una lista de identificadores relacionados con un
+     * enunciado. Dependiendo del tipo, consulta las unidades, convocatorias o
+     * enunciados relacionados con dicho enunciado.
+     *
+     * @param idEnunciado El identificador del enunciado.
+     * @param tipo El tipo de consulta que se desea realizar, puede ser
+     * 'unidades', 'enunciados' o 'convocatorias'.
+     * @return Una lista de identificadores relacionados con el enunciado.
+     */
+    public List<Integer> consultaListaIds(Integer idEnunciado, String tipo) {
+        List<Integer> lista = new ArrayList<>();
+        ResultSet resultado;
+
+        try {
+            // Abrimos la conexión con la base de datos
+            openConnection();
+
+            // Dependiendo del tipo, seleccionamos la consulta adecuada
+            switch (tipo) {
+                case "unidades":
+                    declaracion = conexion.prepareStatement(CONSULTA_LISTA_IDS_UNIDADES_DE_ENUNCIADO);
+                    break;
+                case "enunciados":
+                    declaracion = conexion.prepareStatement(CONSULTA_LISTA_IDS_ENUNCIADOS_DE_UNIDAD);
+                    break;
+                case "convocatorias":
+                    declaracion = conexion.prepareStatement(CONSULTA_LISTA_IDS_CONVOCATORIAS_DE_ENUNCIADO);
+                    break;
+            }
+
+            // Asignamos el valor del parámetro idEnunciado
+            declaracion.setInt(1, idEnunciado);
+
+            // Ejecutamos la consulta y obtenemos el resultado
+            resultado = declaracion.executeQuery();
+
+            // Recorremos los resultados de la consulta y añadimos los IDs a la lista
+            while (resultado.next()) {
+                lista.add(resultado.getInt("ID"));
+            }
+
+        } catch (SQLException evento) {
+            // Manejamos la excepción en caso de fallo en la consulta
+            evento.printStackTrace();
+        } finally {
+            // Cerramos la conexión con la base de datos
+            closeConnection();
+        }
+
+        // Devolvemos la lista de identificadores
+        return lista;
     }
 
 }
