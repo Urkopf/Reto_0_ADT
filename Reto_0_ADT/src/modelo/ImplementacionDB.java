@@ -338,15 +338,16 @@ public class ImplementacionDB implements IDao {
     
     /**
      * Método que consulta una lista de identificadores relacionados con un
-     * enunciado. Dependiendo del tipo, consulta las unidades, convocatorias o
-     * enunciados relacionados con dicho enunciado.
+     * id.
+     * Dependiendo del tipo, consulta las unidades, convocatorias o enunciados
+     * relacionados con dicho id.
      *
-     * @param idEnunciado El identificador del enunciado.
+     * @param id El identificador de referencia.
      * @param tipo El tipo de consulta que se desea realizar, puede ser
      * 'unidades', 'enunciados' o 'convocatorias'.
      * @return Una lista de identificadores relacionados con el enunciado.
      */
-    public List<Integer> consultaListaIds(Integer idEnunciado, String tipo) {
+    public List<Integer> consultaListaIds(Integer id, String tipo) {
         List<Integer> lista = new ArrayList<>();
         ResultSet resultado;
 
@@ -368,7 +369,7 @@ public class ImplementacionDB implements IDao {
             }
 
             // Asignamos el valor del parámetro idEnunciado
-            declaracion.setInt(1, idEnunciado);
+            declaracion.setInt(1, id);
 
             // Ejecutamos la consulta y obtenemos el resultado
             resultado = declaracion.executeQuery();
