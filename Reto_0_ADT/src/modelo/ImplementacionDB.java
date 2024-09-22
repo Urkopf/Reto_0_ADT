@@ -10,6 +10,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
 
@@ -140,6 +141,16 @@ public class ImplementacionDB implements IDao {
 
     @Override
     public void agregarConvocatoriaEnunciado(Integer idEnunciado, Integer idConvocatoria) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void crearUnidadDidactica(UnidadDidactica unidad) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public List<UnidadDidactica> get() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 

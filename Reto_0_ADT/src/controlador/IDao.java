@@ -5,6 +5,7 @@
  */
 package controlador;
 
+import java.util.List;
 import java.util.Map;
 import modelo.ConvocatoriaExamen;
 import modelo.Enunciado;
@@ -37,5 +38,9 @@ public interface IDao {
     //public Vector<Integer> visualizaDocumento(Integer idEnunciado);
 
     public void agregarConvocatoriaEnunciado(Integer idEnunciado, Integer idConvocatoria);
+
+    public void crearUnidadDidactica(UnidadDidactica unidad);
+
+    public List<UnidadDidactica> get();
 
 }

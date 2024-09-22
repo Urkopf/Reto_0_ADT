@@ -1,85 +1,78 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package vista;
 
 import controlador.IDao;
 import controlador.IVista;
-import java.sql.SQLException;
+import modelo.UnidadDidactica;
 import utilidades.Utilidades;
 
-/**
- *
- * @author 2dam
- */
+import java.util.List;
+
 public class VistaConsola implements IVista {
 
     private IDao dao;
 
-    public VistaConsola(IDao dao) throws SQLException {
+    public VistaConsola(IDao dao) {
         this.dao = dao;
-        visualizaMenu();
     }
 
-    private void menu() {
-
-        System.out.println("--------------------------------------");
-        System.out.println("             MENU OPCION              ");
-        System.out.println("--------------------------------------");
-        System.out.println("1) Consulta Ejemplo                   ");
-        System.out.println("2) Insercion UnidadDidactica          ");
-        System.out.println("3) Salir de al App                    ");
-        System.out.println("--------------------------------------");
-        System.out.println("                 Opcion               ");
-    }
-    /*
-    private void consulta() {
-        List<UnidadDidactica> mis_unidades;
-        mis_unidades = dao.get();
-        for (UnidadDidactica unidad : mis_unidades) {
-            System.out.println(unidad);
-        }
+    public void mostrarMenu() {
+        System.out.println("+------------------------------+");
+        System.out.println("|      Menú Principal          |");
+        System.out.println("+------------------------------+");
+        System.out.println("| 1. Crear Unidad Didáctica    |");
+        System.out.println("| 2. Consultar Unidades        |");
+        System.out.println("| 0. Salir                     |");
+        System.out.println("+------------------------------+");
     }
 
-    private void insercionUnidadDidactica() {
-        String acronimo, titulo, evaluacion, descripcion;
-        System.out.println("Introduce los campos: ");
-        UnidadDidactica unidad = new UnidadDidactica();
-        //Cuidado ejemplo para id de manera manual
-        unidad.setidUnidad(2);
-        acronimo = Utilidades.introducirCadena("Introduce el acronimo:");
-        unidad.setAcronimo(acronimo);
-        titulo = Utilidades.introducirCadena("Introduce el titulo:");
-        unidad.setTitulo(titulo);
-        evaluacion = Utilidades.introducirCadena("Introduce el evaluacion:");
-        unidad.setEvaluacion(evaluacion);
-        descripcion = Utilidades.introducirCadena("Introduce el descripcion:");
-        unidad.setDescripcion(descripcion);
-
-        dao.crearUnidadDidactica(unidad);
-        System.out.println("Todo Bien!!!");
-    }
-    */
-    @Override
-    public void visualizaMenu() {
-        Integer opc;
+    public void mostrarOpciones() {
+        int opcion;
         do {
-            menu();
-            opc = Utilidades.introducirInteger("Introduzca una opcion valida: ");
-            switch (opc) {
+            mostrarMenu();
+            opcion = Utilidades.introducirInteger("Seleccione una opción:");
+
+            switch (opcion) {
                 case 1:
+                    crearUnidadDidactica();
                     break;
                 case 2:
+                    consultarUnidadesDidacticas();
                     break;
-                case 3:
-                    System.out.println("Agur");
+                case 0:
+                    System.out.println("Saliendo...");
                     break;
                 default:
-                    System.out.println("Opcion incorrecta");
+                    System.out.println("Opción no válida. Inténtelo de nuevo.");
             }
-        } while (opc != 3);
+        } while (opcion != 0);
+    }
+
+    private void crearUnidadDidactica() {
+        UnidadDidactica unidad = new UnidadDidactica();
+        unidad.setidUnidad(Utilidades.introducirInteger("Ingrese ID de la unidad didáctica:"));
+        unidad.setAcronimo(Utilidades.introducirCadena("Ingrese el acrónimo:"));
+        unidad.setTitulo(Utilidades.introducirCadena("Ingrese el título:"));
+        unidad.setEvaluacion(Utilidades.introducirCadena("Ingrese la evaluación:"));
+        unidad.setDescripcion(Utilidades.introducirCadena("Ingrese la descripción:"));
+
+        dao.crearUnidadDidactica(unidad);
+        System.out.println("Unidad Didáctica creada exitosamente.");
+    }
+
+    private void consultarUnidadesDidacticas() {
+        List<UnidadDidactica> unidades = dao.get();
+        System.out.println("+------------------------------+");
+        System.out.println("|     Unidades Didácticas      |");
+        System.out.println("+------------------------------+");
+        for (UnidadDidactica unidad : unidades) {
+            System.out.println("| " + unidad);
+        }
+        System.out.println("+------------------------------+");
+    }
+
+    @Override
+    public void visualizaMenu() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
@@ -111,5 +104,4 @@ public class VistaConsola implements IVista {
     public void opcionAsignarEnunciadoAConvocatoria() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
-
 }
