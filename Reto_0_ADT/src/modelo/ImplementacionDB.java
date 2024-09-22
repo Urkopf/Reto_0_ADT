@@ -12,6 +12,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
@@ -28,8 +29,10 @@ public class ImplementacionDB implements IDao {
     private Connection conexion;
     private PreparedStatement declaracion;
 
-    private final String CONSULTA_TODO = "SELECT * FROM UNIDADDIDACTICA";
-    private final String INSERCION_EJEMPLO = "INSERT INTO UNIDADDIDACTICA VALUES (?,?,?,?,?)";
+    private final String CONSULTA_TODAS_UNIDADES = "SELECT * FROM UNIDADDIDACTICA";
+    private final String INSERCION_UNIDAD = "INSERT INTO UNIDADDIDACTICA VALUES (?,?,?,?,?)";
+    private final String INSERCION_CONVOCATORIA = "INSERT INTO CONVOCATORIAEXAMEN(ID,CONVOCATORIA,DESCRIPCION,FECHA,CURSO) VALUES(?,?,?,?,?)";
+    private final String INSERCION_ENUNCIADO = "INSERT INTO ENUNCIADO VALUES(?,?,?,?,?)";
 
     private final String CONSULTA_TODOS_ENUNCIADOS = "SELECT * FROM ENUNCIADO";
     private final String CONSULTA_LISTA_IDS_UNIDADES_DE_ENUNCIADO = "SELECT UNIDADID AS ID FROM UNIDADENUNCIADO WHERE ENUNCIADOID = ?";
@@ -64,6 +67,7 @@ public class ImplementacionDB implements IDao {
             evento.printStackTrace();
         }
     }
+
     /*
     //Ejemplo para que todo funcionaba correctamente la conexion
     @Override
@@ -114,25 +118,109 @@ public class ImplementacionDB implements IDao {
             closeConnection();
         }
     }
-    */
+     */
     @Override
     public void insertarUnidadDidactica(UnidadDidactica unidad) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        try {
+            openConnection();
+            //Preparamos la insercion con la sql de arriba
+            declaracion = conexion.prepareStatement(INSERCION_UNIDAD);
+            declaracion.setInt(1, unidad.getidUnidad());
+            declaracion.setString(2, unidad.getAcronimo());
+            declaracion.setString(3, unidad.getTitulo());
+            declaracion.setString(4, unidad.getEvaluacion());
+            declaracion.setString(5, unidad.getDescripcion());
+            declaracion.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            closeConnection();
+        }
     }
 
     @Override
     public void insertarConvocatoria(ConvocatoriaExamen convocatoria) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        //Insercion de convocatoria sin el FK -> EnunciadoId
+        try {
+            openConnection();
+            //Preparamos la insercion con la sql de arriba
+            declaracion = conexion.prepareStatement(INSERCION_CONVOCATORIA);
+            declaracion.setInt(1, convocatoria.getIdConvocatoria());
+            declaracion.setString(2, convocatoria.getConvocatoria());
+            declaracion.setString(3, convocatoria.getDescripcion());
+            declaracion.setDate(4, Date.valueOf(convocatoria.getFecha()));
+            declaracion.setString(5, convocatoria.getCurso());
+            declaracion.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            closeConnection();
+        }
     }
 
     @Override
     public void insertarEnunciado(Enunciado enunciado) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        try {
+            openConnection();
+            //Preparamos la insercion con la sql de arriba
+            declaracion = conexion.prepareStatement(INSERCION_ENUNCIADO);
+            declaracion.setInt(1, enunciado.getIdEnunciado());
+            declaracion.setString(2, enunciado.getDescripcion());
+            declaracion.setString(3, String.valueOf(enunciado.getDificultad()));
+            declaracion.setBoolean(4, enunciado.getDisponible());
+            declaracion.setString(5, enunciado.getRuta());
+            declaracion.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            closeConnection();
+        }
     }
 
     @Override
     public Map<Integer, UnidadDidactica> cargarUnidadesDidacticas() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        UnidadDidactica unidad;
+        Map<Integer, UnidadDidactica> lista = new TreeMap<>();
+        ResultSet resultado;
+
+        try {
+            // Abrimos la conexión con la base de datos
+            openConnection();
+
+            // Preparamos la consulta para obtener todos los enunciados
+            declaracion = conexion.prepareStatement(CONSULTA_TODAS_UNIDADES);
+
+            // Ejecutamos la consulta y obtenemos el resultado
+            resultado = declaracion.executeQuery();
+
+            // Recorremos los resultados de la consulta
+            while (resultado.next()) {
+                unidad = new UnidadDidactica();
+
+                // Asignamos los valores del ResultSet al objeto Enunciado
+                unidad.setidUnidad(resultado.getInt("ID"));
+                unidad.setAcronimo(resultado.getString("ACRONIMO"));
+                unidad.setTitulo(resultado.getString("TITULO"));
+                unidad.setEvaluacion(resultado.getString("EVALUACION"));
+                unidad.setDescripcion(resultado.getString("DESCRIPCION"));
+
+                // Cargamos las unidades asociadas al enunciado
+                unidad.setListaUnidades(consultaListaIds(unidad.getidUnidad(), "unidades"));
+
+                // Añadimos el enunciado al Map
+                lista.put(unidad.getidUnidad(), unidad);
+            }
+
+        } catch (SQLException evento) {
+            // Manejamos la excepción en caso de fallo en la consulta
+            evento.printStackTrace();
+        } finally {
+            // Cerramos la conexión con la base de datos
+            closeConnection();
+        }
+
+        // Devolvemos el TreeMap con los enunciados
+        return lista;
     }
 
     /**
@@ -190,7 +278,6 @@ public class ImplementacionDB implements IDao {
         // Devolvemos el TreeMap con los enunciados
         return lista;
     }
-
 
     /**
      * Método que carga todas las convocatorias de examen disponibles en la base
@@ -301,7 +388,6 @@ public class ImplementacionDB implements IDao {
         return lista;
     }
 
-
     /**
      * Método que actualiza una convocatoria asignando un enunciado a ella.
      *
@@ -335,10 +421,8 @@ public class ImplementacionDB implements IDao {
         }
     }
 
-    
     /**
-     * Método que consulta una lista de identificadores relacionados con un
-     * id.
+     * Método que consulta una lista de identificadores relacionados con un id.
      * Dependiendo del tipo, consulta las unidades, convocatorias o enunciados
      * relacionados con dicho id.
      *
