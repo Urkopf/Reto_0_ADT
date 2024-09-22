@@ -67,4 +67,8 @@ public class ConvocatoriaExamen {
         return "ConvocatoriaExamen{" + "idConvocatoria=" + idConvocatoria + ", convocatoria=" + convocatoria + ", descripcion=" + descripcion + ", fecha=" + fecha + ", curso=" + curso + '}';
     }
 
+    public void setIdConvocatoria(int introducirInteger) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
 }

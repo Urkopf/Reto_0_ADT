@@ -43,4 +43,14 @@ public interface IDao {
 
     public List<UnidadDidactica> get();
 
+    public List<UnidadDidactica> getUnidadesDidacticas();
+
+    public void crearConvocatoria(ConvocatoriaExamen convocatoria);
+
+    public void crearEnunciado(Enunciado enunciado);
+
+    public List<Enunciado> getEnunciadosDeUnidad(int idUnidad);
+
+    public void asignarEnunciadoAConvocatoria(int idEnunciado, int idConvocatoria);
+
 }

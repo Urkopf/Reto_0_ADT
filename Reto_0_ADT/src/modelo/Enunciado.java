@@ -88,4 +88,8 @@ public class Enunciado {
         return "Enunciado{" + "idEnunciado=" + idEnunciado + ", descripcion=" + descripcion + ", dificultad=" + dificultad + ", disponible=" + disponible + ", ruta=" + ruta + ", listaUnidades=" + listaUnidades + ", listaConvocatorias=" + listaConvocatorias + '}';
     }
 
+    public void setIdEnunciado(int introducirInteger) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
 }
