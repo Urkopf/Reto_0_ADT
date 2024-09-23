@@ -13,7 +13,9 @@ public interface IVista {
 
     public void visualizaMenu();
 
-    public void opcionCrearUnidadYConvocatoria();
+    public void crearUnidadDidactica();
+
+    public void opcionCrearConvocatoria();
 
     public void opcionCrearEnunciado();
 

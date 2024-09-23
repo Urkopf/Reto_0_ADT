@@ -1,6 +1,5 @@
 package controlador;
 
-import java.util.List;
 import java.util.Map;
 import modelo.ConvocatoriaExamen;
 import modelo.Enunciado;
@@ -70,6 +69,8 @@ public interface IDao {
      * convocatorias y los valores son los objetos {@code ConvocatoriaExamen}.
      */
     public Map<Integer, ConvocatoriaExamen> consultaEnunciadoConvocatoria(Integer idEnunciado);
+    
+    public Map<Integer, Enunciado> consultaEnunciadoUnidadDidactica(Integer idUnidad);
 
     /**
      * Asocia una convocatoria de examen a un enunciado específico en la base de
