@@ -28,8 +28,10 @@ public class ImplementacionDB implements IDao {
     private Connection conexion;
     private PreparedStatement declaracion;
 
-    private final String CONSULTA_TODO = "SELECT * FROM UNIDADDIDACTICA";
-    private final String INSERCION_EJEMPLO = "INSERT INTO UNIDADDIDACTICA VALUES (?,?,?,?,?)";
+    private final String CONSULTA_TODAS_UNIDADES = "SELECT * FROM UNIDADDIDACTICA";
+    private final String INSERCION_UNIDAD = "INSERT INTO UNIDADDIDACTICA VALUES (?,?,?,?,?)";
+    private final String INSERCION_CONVOCATORIA = "INSERT INTO CONVOCATORIAEXAMEN(ID,CONVOCATORIA,DESCRIPCION,FECHA,CURSO) VALUES(?,?,?,?,?)";
+    private final String INSERCION_ENUNCIADO = "INSERT INTO ENUNCIADO VALUES(?,?,?,?,?)";
 
     private final String CONSULTA_TODOS_ENUNCIADOS = "SELECT * FROM ENUNCIADO";
     private final String CONSULTA_LISTA_IDS_UNIDADES_DE_ENUNCIADO = "SELECT UNIDADID AS ID FROM UNIDADENUNCIADO WHERE ENUNCIADOID = ?";
@@ -64,6 +66,7 @@ public class ImplementacionDB implements IDao {
             evento.printStackTrace();
         }
     }
+
     /*
     //Ejemplo para que todo funcionaba correctamente la conexion
     @Override
@@ -114,25 +117,171 @@ public class ImplementacionDB implements IDao {
             closeConnection();
         }
     }
-    */
+     */
+    //--------------------------------------------------------------
+    /**
+     * Inserta una nueva unidad didáctica en la base de datos.
+     *
+     * <p>
+     * Este método establece una conexión con la base de datos y ejecuta una
+     * sentencia SQL de inserción utilizando los valores proporcionados en el
+     * objeto {@link UnidadDidactica}. Después de la inserción, se cierra la
+     * conexión automáticamente, ya sea que la operación sea exitosa o no.
+     *
+     * @param unidad El objeto {@link UnidadDidactica} que contiene la
+     * información de la unidad didáctica a insertar, incluyendo id, acrónimo,
+     * título, evaluación y descripción.
+     * @throws SQLException Si ocurre algún error en la ejecución de la
+     * sentencia SQL.
+     */
     @Override
     public void insertarUnidadDidactica(UnidadDidactica unidad) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        try {
+            openConnection();
+            //Preparamos la insercion con la sql de arriba
+            declaracion = conexion.prepareStatement(INSERCION_UNIDAD);
+            declaracion.setInt(1, unidad.getidUnidad());
+            declaracion.setString(2, unidad.getAcronimo());
+            declaracion.setString(3, unidad.getTitulo());
+            declaracion.setString(4, unidad.getEvaluacion());
+            declaracion.setString(5, unidad.getDescripcion());
+            declaracion.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            closeConnection();
+        }
     }
-
+    /**
+     * Inserta una nueva convocatoria de examen en la base de datos.
+     *
+     * <p>
+     * Este método establece una conexión con la base de datos y ejecuta una
+     * sentencia SQL de inserción utilizando los valores proporcionados en el
+     * objeto {@link ConvocatoriaExamen}. La inserción se realiza sin la clave
+     * foránea (FK) relacionada con el enunciado. Después de la inserción, la
+     * conexión se cierra automáticamente, independientemente de si la operación
+     * fue exitosa o no.
+     *
+     * @param convocatoria El objeto {@link ConvocatoriaExamen} que contiene la
+     * información de la convocatoria a insertar, incluyendo id, nombre,
+     * descripción, fecha y curso.
+     * @throws SQLException Si ocurre algún error en la ejecución de la
+     * sentencia SQL.
+     */
     @Override
     public void insertarConvocatoria(ConvocatoriaExamen convocatoria) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        //Insercion de convocatoria sin el FK -> EnunciadoId
+        try {
+            openConnection();
+            //Preparamos la insercion con la sql de arriba
+            declaracion = conexion.prepareStatement(INSERCION_CONVOCATORIA);
+            declaracion.setInt(1, convocatoria.getIdConvocatoria());
+            declaracion.setString(2, convocatoria.getConvocatoria());
+            declaracion.setString(3, convocatoria.getDescripcion());
+            declaracion.setDate(4, java.sql.Date.valueOf(convocatoria.getFecha()));
+            declaracion.setString(5, convocatoria.getCurso());
+            declaracion.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            closeConnection();
+        }
     }
-
+    /**
+     * Inserta un nuevo enunciado en la base de datos.
+     *
+     * <p>
+     * Este método establece una conexión con la base de datos y ejecuta una
+     * sentencia SQL de inserción utilizando los valores proporcionados en el
+     * objeto {@link Enunciado}. Después de la inserción, la conexión se cierra
+     * automáticamente, independientemente de si la operación fue exitosa o no.
+     *
+     * @param enunciado El objeto {@link Enunciado} que contiene la información
+     * del enunciado a insertar, incluyendo id, descripción, dificultad,
+     * disponibilidad y ruta.
+     * @throws SQLException Si ocurre algún error en la ejecución de la
+     * sentencia SQL.
+     */
     @Override
     public void insertarEnunciado(Enunciado enunciado) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        try {
+            openConnection();
+            //Preparamos la insercion con la sql de arriba
+            declaracion = conexion.prepareStatement(INSERCION_ENUNCIADO);
+            declaracion.setInt(1, enunciado.getIdEnunciado());
+            declaracion.setString(2, enunciado.getDescripcion());
+            declaracion.setString(3, String.valueOf(enunciado.getDificultad()));
+            declaracion.setBoolean(4, enunciado.getDisponible());
+            declaracion.setString(5, enunciado.getRuta());
+            declaracion.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            closeConnection();
+        }
     }
-
+    /**
+     * Carga todas las unidades didácticas desde la base de datos y las devuelve
+     * en un mapa.
+     *
+     * <p>
+     * Este método establece una conexión con la base de datos, ejecuta una
+     * consulta SQL para obtener todas las unidades didácticas, y luego recorre
+     * los resultados, asignando los valores obtenidos a objetos
+     * {@link UnidadDidactica}. Cada unidad se almacena en un {@link Map}, con
+     * la clave siendo el id de la unidad y el valor el objeto
+     * {@link UnidadDidactica}.
+     *
+     * @return Un {@link Map} que contiene todas las unidades didácticas
+     * cargadas desde la base de datos, donde la clave es el id de la unidad y
+     * el valor es el objeto {@link UnidadDidactica}.
+     * @throws SQLException Si ocurre algún error al ejecutar la consulta SQL.
+     */
     @Override
     public Map<Integer, UnidadDidactica> cargarUnidadesDidacticas() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        UnidadDidactica unidad;
+        Map<Integer, UnidadDidactica> lista = new TreeMap<>();
+        ResultSet resultado;
+
+        try {
+            // Abrimos la conexión con la base de datos
+            openConnection();
+
+            // Preparamos la consulta para obtener todos los enunciados
+            declaracion = conexion.prepareStatement(CONSULTA_TODAS_UNIDADES);
+
+            // Ejecutamos la consulta y obtenemos el resultado
+            resultado = declaracion.executeQuery();
+
+            // Recorremos los resultados de la consulta
+            while (resultado.next()) {
+                unidad = new UnidadDidactica();
+
+                // Asignamos los valores del ResultSet al objeto Enunciado
+                unidad.setidUnidad(resultado.getInt("ID"));
+                unidad.setAcronimo(resultado.getString("ACRONIMO"));
+                unidad.setTitulo(resultado.getString("TITULO"));
+                unidad.setEvaluacion(resultado.getString("EVALUACION"));
+                unidad.setDescripcion(resultado.getString("DESCRIPCION"));
+
+                // Cargamos las unidades asociadas al enunciado
+                unidad.setListaUnidades(consultaListaIds(unidad.getidUnidad(), "unidades"));
+
+                // Añadimos el enunciado al Map
+                lista.put(unidad.getidUnidad(), unidad);
+            }
+
+        } catch (SQLException evento) {
+            // Manejamos la excepción en caso de fallo en la consulta
+            evento.printStackTrace();
+        } finally {
+            // Cerramos la conexión con la base de datos
+            closeConnection();
+        }
+
+        // Devolvemos el TreeMap con los enunciados
+        return lista;
     }
 
     /**
@@ -190,7 +339,6 @@ public class ImplementacionDB implements IDao {
         // Devolvemos el TreeMap con los enunciados
         return lista;
     }
-
 
     /**
      * Método que carga todas las convocatorias de examen disponibles en la base
@@ -301,7 +449,6 @@ public class ImplementacionDB implements IDao {
         return lista;
     }
 
-
     /**
      * Método que actualiza una convocatoria asignando un enunciado a ella.
      *
@@ -335,10 +482,8 @@ public class ImplementacionDB implements IDao {
         }
     }
 
-    
     /**
-     * Método que consulta una lista de identificadores relacionados con un
-     * id.
+     * Método que consulta una lista de identificadores relacionados con un id.
      * Dependiendo del tipo, consulta las unidades, convocatorias o enunciados
      * relacionados con dicho id.
      *
