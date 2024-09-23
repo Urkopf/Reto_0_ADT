@@ -118,6 +118,22 @@ public class ImplementacionDB implements IDao {
         }
     }
      */
+    //--------------------------------------------------------------
+    /**
+     * Inserta una nueva unidad didáctica en la base de datos.
+     *
+     * <p>
+     * Este método establece una conexión con la base de datos y ejecuta una
+     * sentencia SQL de inserción utilizando los valores proporcionados en el
+     * objeto {@link UnidadDidactica}. Después de la inserción, se cierra la
+     * conexión automáticamente, ya sea que la operación sea exitosa o no.
+     *
+     * @param unidad El objeto {@link UnidadDidactica} que contiene la
+     * información de la unidad didáctica a insertar, incluyendo id, acrónimo,
+     * título, evaluación y descripción.
+     * @throws SQLException Si ocurre algún error en la ejecución de la
+     * sentencia SQL.
+     */
     @Override
     public void insertarUnidadDidactica(UnidadDidactica unidad) {
         try {
@@ -136,7 +152,23 @@ public class ImplementacionDB implements IDao {
             closeConnection();
         }
     }
-
+    /**
+     * Inserta una nueva convocatoria de examen en la base de datos.
+     *
+     * <p>
+     * Este método establece una conexión con la base de datos y ejecuta una
+     * sentencia SQL de inserción utilizando los valores proporcionados en el
+     * objeto {@link ConvocatoriaExamen}. La inserción se realiza sin la clave
+     * foránea (FK) relacionada con el enunciado. Después de la inserción, la
+     * conexión se cierra automáticamente, independientemente de si la operación
+     * fue exitosa o no.
+     *
+     * @param convocatoria El objeto {@link ConvocatoriaExamen} que contiene la
+     * información de la convocatoria a insertar, incluyendo id, nombre,
+     * descripción, fecha y curso.
+     * @throws SQLException Si ocurre algún error en la ejecución de la
+     * sentencia SQL.
+     */
     @Override
     public void insertarConvocatoria(ConvocatoriaExamen convocatoria) {
         //Insercion de convocatoria sin el FK -> EnunciadoId
@@ -156,7 +188,21 @@ public class ImplementacionDB implements IDao {
             closeConnection();
         }
     }
-
+    /**
+     * Inserta un nuevo enunciado en la base de datos.
+     *
+     * <p>
+     * Este método establece una conexión con la base de datos y ejecuta una
+     * sentencia SQL de inserción utilizando los valores proporcionados en el
+     * objeto {@link Enunciado}. Después de la inserción, la conexión se cierra
+     * automáticamente, independientemente de si la operación fue exitosa o no.
+     *
+     * @param enunciado El objeto {@link Enunciado} que contiene la información
+     * del enunciado a insertar, incluyendo id, descripción, dificultad,
+     * disponibilidad y ruta.
+     * @throws SQLException Si ocurre algún error en la ejecución de la
+     * sentencia SQL.
+     */
     @Override
     public void insertarEnunciado(Enunciado enunciado) {
         try {
@@ -175,7 +221,23 @@ public class ImplementacionDB implements IDao {
             closeConnection();
         }
     }
-
+    /**
+     * Carga todas las unidades didácticas desde la base de datos y las devuelve
+     * en un mapa.
+     *
+     * <p>
+     * Este método establece una conexión con la base de datos, ejecuta una
+     * consulta SQL para obtener todas las unidades didácticas, y luego recorre
+     * los resultados, asignando los valores obtenidos a objetos
+     * {@link UnidadDidactica}. Cada unidad se almacena en un {@link Map}, con
+     * la clave siendo el id de la unidad y el valor el objeto
+     * {@link UnidadDidactica}.
+     *
+     * @return Un {@link Map} que contiene todas las unidades didácticas
+     * cargadas desde la base de datos, donde la clave es el id de la unidad y
+     * el valor es el objeto {@link UnidadDidactica}.
+     * @throws SQLException Si ocurre algún error al ejecutar la consulta SQL.
+     */
     @Override
     public Map<Integer, UnidadDidactica> cargarUnidadesDidacticas() {
         UnidadDidactica unidad;
