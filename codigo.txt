@@ -1,0 +1,1005 @@
+en iDao este este codigo:
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package controlador;
+
+import java.util.Map;
+import modelo.ConvocatoriaExamen;
+import modelo.Enunciado;
+import modelo.UnidadDidactica;
+
+/**
+ *
+ * @author 2dam
+ */
+public interface IDao {
+
+    //public List<UnidadDidactica> get();
+
+    //public void crearUnidadDidactica(UnidadDidactica unidad);
+
+    public void insertarUnidadDidactica(UnidadDidactica unidad);
+
+    public void insertarConvocatoria(ConvocatoriaExamen convocatoria);
+
+    public void insertarEnunciado(Enunciado enunciado);
+
+    public Map<Integer, UnidadDidactica> cargarUnidadesDidacticas();
+
+    public Map<Integer, Enunciado> cargarEnunciados();
+
+    public Map<Integer, ConvocatoriaExamen> cargarConvocatoriasExamen();
+
+    public Map<Integer, ConvocatoriaExamen> consultaEnunciadoConvocatoria(Integer idEnunciado);
+
+    //public Vector<Integer> visualizaDocumento(Integer idEnunciado);
+
+    public void agregarConvocatoriaEnunciado(Integer idEnunciado, Integer idConvocatoria);
+
+}
+
+En IVista este codigo:
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package controlador;
+
+/**
+ *
+ * @author 2dam
+ */
+public interface IVista {
+
+    public void visualizaMenu();
+
+    public void opcionCrearUnidadYConvocatoria();
+
+    public void opcionCrearEnunciado();
+
+    public void opcionConsultaEnunciadosDeUnidad();
+
+    public void opcionConsultaConvocatoriasConEnunciado();
+
+    public void opcionVisualizaDocumento();
+
+    public void opcionAsignarEnunciadoAConvocatoria();
+}
+
+En principal.java:
+package controlador;
+
+import java.sql.SQLException;
+import modelo.ImplementacionDB;
+import vista.VistaConsola;
+
+
+
+/**
+ *
+ * @author 2dam
+ */
+public class Principal {
+
+    /**
+     * @param args the command line arguments
+     */
+    public static void main(String[] args) throws SQLException {
+        IDao dao = new ImplementacionDB();
+        IVista vista = new VistaConsola(dao);
+    }
+
+}
+
+ahora te mando mas
+
+En convocatoriaExamen.java:
+
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package modelo;
+
+import java.time.LocalDate;
+
+/**
+ *
+ * @author 2dam
+ */
+public class ConvocatoriaExamen {
+
+    private Integer idConvocatoria;
+    private String convocatoria;
+    private String descripcion;
+    private LocalDate fecha;
+    private String curso;
+
+    public ConvocatoriaExamen() {
+    }
+
+    public Integer getidConvocatoria() {
+        return idConvocatoria;
+    }
+
+    public void setidConvocatoria(Integer idConvocatoria) {
+        this.idConvocatoria = idConvocatoria;
+    }
+
+    public String getConvocatoria() {
+        return convocatoria;
+    }
+
+    public void setConvocatoria(String convocatoria) {
+        this.convocatoria = convocatoria;
+    }
+
+    public String getDescripcion() {
+        return descripcion;
+    }
+
+    public void setDescripcion(String descripcion) {
+        this.descripcion = descripcion;
+    }
+
+    public LocalDate getFecha() {
+        return fecha;
+    }
+
+    public void setFecha(LocalDate fecha) {
+        this.fecha = fecha;
+    }
+
+    public String getCurso() {
+        return curso;
+    }
+
+    public void setCurso(String curso) {
+        this.curso = curso;
+    }
+
+    @Override
+    public String toString() {
+        return "ConvocatoriaExamen{" + "idConvocatoria=" + idConvocatoria + ", convocatoria=" + convocatoria + ", descripcion=" + descripcion + ", fecha=" + fecha + ", curso=" + curso + '}';
+    }
+
+}
+
+En Dificultad.java:
+
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package modelo;
+
+/**
+ *
+ * @author 2dam
+ */
+public enum Dificultad {
+    ALTA, MEDIA, BAJA;
+}
+
+En enunciado.java:
+
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package modelo;
+
+import java.util.Map;
+import java.util.TreeMap;
+
+/**
+ *
+ * @author 2dam
+ */
+public class Enunciado {
+
+    private Integer idEnunciado;
+    private String descripcion;
+    private Enum dificultad;
+    private Boolean disponible;
+    private String ruta;
+    private Map<Integer, UnidadDidactica> listaUnidades;
+    private Map<Integer, ConvocatoriaExamen> listaConvocatorias;
+
+    public Enunciado() {
+        listaUnidades = new TreeMap<>();
+        listaConvocatorias = new TreeMap<>();
+    }
+
+    public Integer getidEnunciado() {
+        return idEnunciado;
+    }
+
+    public void setidEnunciado(Integer idEnunciado) {
+        this.idEnunciado = idEnunciado;
+    }
+
+    public String getDescripcion() {
+        return descripcion;
+    }
+
+    public void setDescripcion(String descripcion) {
+        this.descripcion = descripcion;
+    }
+
+    public Enum getDificultad() {
+        return dificultad;
+    }
+
+    public void setDificultad(Enum dificultad) {
+        this.dificultad = dificultad;
+    }
+
+    public Boolean getDisponible() {
+        return disponible;
+    }
+
+    public void setDisponible(Boolean disponible) {
+        this.disponible = disponible;
+    }
+
+    public String getRuta() {
+        return ruta;
+    }
+
+    public void setRuta(String ruta) {
+        this.ruta = ruta;
+    }
+
+    public Map<Integer, UnidadDidactica> getListaUnidades() {
+        return listaUnidades;
+    }
+
+    public void setListaUnidades(Map<Integer, UnidadDidactica> listaUnidades) {
+        this.listaUnidades = listaUnidades;
+    }
+
+    public Map<Integer, ConvocatoriaExamen> getListaConvocatorias() {
+        return listaConvocatorias;
+    }
+
+    public void setListaConvocatorias(Map<Integer, ConvocatoriaExamen> listaConvocatorias) {
+        this.listaConvocatorias = listaConvocatorias;
+    }
+
+    @Override
+    public String toString() {
+        return "Enunciado{" + "idEnunciado=" + idEnunciado + ", descripcion=" + descripcion + ", dificultad=" + dificultad + ", disponible=" + disponible + ", ruta=" + ruta + ", listaUnidades=" + listaUnidades + ", listaConvocatorias=" + listaConvocatorias + '}';
+    }
+
+}
+
+En implementacionDB:java:
+
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package modelo;
+
+import controlador.IDao;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.util.Map;
+import java.util.ResourceBundle;
+
+/**
+ *
+ * @author 2dam
+ */
+public class ImplementacionDB implements IDao {
+
+    private ResourceBundle fichConf;
+    private String URL, DBROOT, DBROOTPASS;
+    private Connection conexion;
+    private PreparedStatement declaracion;
+
+    private final String CONSULTA_TODO = "SELECT * FROM UNIDADDIDACTICA";
+    private final String INSERCION_EJEMPLO = "INSERT INTO unidaddidactica VALUES (?,?,?,?,?)";
+
+    public ImplementacionDB() {
+        fichConf = ResourceBundle.getBundle("modelo.dbConfig");
+        URL = fichConf.getString("URL");
+        DBROOT = fichConf.getString("DBROOT");
+        DBROOTPASS = fichConf.getString("DBROOTPASS");
+    }
+
+    private void openConnection() throws SQLException {
+
+        conexion = DriverManager.getConnection(URL, DBROOT, DBROOTPASS);
+
+    }
+
+    private void closeConnection() {
+        try {
+            if (declaracion != null) {
+                declaracion.close();
+            }
+            if (conexion != null) {
+                conexion.close();
+            }
+        } catch (SQLException evento) {
+            evento.printStackTrace();
+        }
+    }
+    /*
+    //Ejemplo para que todo funcionaba correctamente la conexion
+    @Override
+    public List<UnidadDidactica> get() {
+        UnidadDidactica unidad;
+        List<UnidadDidactica> lista = new ArrayList<>();
+        ResultSet resultado;
+
+        try {
+            openConnection();
+            declaracion = conexion.prepareStatement(CONSULTA_TODO);
+            resultado = declaracion.executeQuery();
+            while (resultado.next()) {
+                unidad = new UnidadDidactica();
+                unidad.setidUnidad(resultado.getInt("ID"));
+                unidad.setAcronimo(resultado.getString("ACRONIMO"));
+                unidad.setTitulo(resultado.getString("TITULO"));
+                unidad.setEvaluacion(resultado.getString("EVALUACION"));
+                unidad.setDescripcion(resultado.getString("DESCRIPCION"));
+                lista.add(unidad);
+            }
+
+        } catch (SQLException evento) {
+            evento.printStackTrace();
+        } finally {
+            closeConnection();
+        }
+
+        return lista;
+    }
+
+    @Override
+    public void crearUnidadDidactica(UnidadDidactica unidad) {
+        ResultSet resultado;
+        try {
+            openConnection();
+            //Preparamos la insercion con la sql de arriba
+            declaracion = conexion.prepareStatement(INSERCION_EJEMPLO);
+            declaracion.setInt(1, unidad.getidUnidad());
+            declaracion.setString(2, unidad.getAcronimo());
+            declaracion.setString(3, unidad.getTitulo());
+            declaracion.setString(4, unidad.getEvaluacion());
+            declaracion.setString(5, unidad.getDescripcion());
+            declaracion.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            closeConnection();
+        }
+    }
+    */
+    @Override
+    public void insertarUnidadDidactica(UnidadDidactica unidad) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void insertarConvocatoria(ConvocatoriaExamen convocatoria) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void insertarEnunciado(Enunciado enunciado) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public Map<Integer, UnidadDidactica> cargarUnidadesDidacticas() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public Map<Integer, Enunciado> cargarEnunciados() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public Map<Integer, ConvocatoriaExamen> cargarConvocatoriasExamen() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public Map<Integer, ConvocatoriaExamen> consultaEnunciadoConvocatoria(Integer idEnunciado) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void agregarConvocatoriaEnunciado(Integer idEnunciado, Integer idConvocatoria) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+}
+
+En unidadDidactica.java:
+
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package modelo;
+
+import java.util.Map;
+import java.util.TreeMap;
+
+/**
+ *
+ * @author 2dam
+ */
+public class UnidadDidactica {
+
+    private Integer idUnidad;
+    private String acronimo;
+    private String titulo;
+    private String evaluacion;
+    private String descripcion;
+    private Map<Integer, Enunciado> listaUnidades;
+
+    public UnidadDidactica() {
+        listaUnidades = new TreeMap<>();
+    }
+
+    public Integer getidUnidad() {
+        return idUnidad;
+    }
+
+    public void setidUnidad(Integer idUnidad) {
+        this.idUnidad = idUnidad;
+    }
+
+    public String getAcronimo() {
+        return acronimo;
+    }
+
+    public void setAcronimo(String acronimo) {
+        this.acronimo = acronimo;
+    }
+
+    public String getTitulo() {
+        return titulo;
+    }
+
+    public void setTitulo(String titulo) {
+        this.titulo = titulo;
+    }
+
+    public String getEvaluacion() {
+        return evaluacion;
+    }
+
+    public void setEvaluacion(String evaluacion) {
+        this.evaluacion = evaluacion;
+    }
+
+    public String getDescripcion() {
+        return descripcion;
+    }
+
+    public void setDescripcion(String descripcion) {
+        this.descripcion = descripcion;
+    }
+
+    public Map<Integer, Enunciado> getListaUnidades() {
+        return listaUnidades;
+    }
+
+    public void setListaUnidades(Map<Integer, Enunciado> listaUnidades) {
+        this.listaUnidades = listaUnidades;
+    }
+
+    @Override
+    public String toString() {
+        return "UnidadDidactica{" + "idUnidad=" + idUnidad + ", acronimo=" + acronimo + ", titulo=" + titulo + ", evaluacion=" + evaluacion + ", descripcion=" + descripcion + ", listaUnidades=" + listaUnidades + '}';
+    }
+
+}
+
+
+En dbConfig.properties:
+
+# To change this license header, choose License Headers in Project Properties.
+# To change this template file, choose Tools | Templates
+# and open the template in the editor.
+
+URL=jdbc:mysql://localhost:3306/examendb?serverTimezone=Europe/Madrid&useSSL=false
+
+DBROOT=root
+DBROOTPASS=abcd*1234
+
+
+En utilidadades.java:
+package utilidades;
+
+import java.io.BufferedReader;
+import java.io.EOFException;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.ObjectInputStream;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+
+public class Utilidades {
+  // Introducir cadenas de texto
+  public static String introducirCadena(String cadena) {
+    BufferedReader lector = new BufferedReader(new InputStreamReader(System.in));
+    String cadenaString = "";
+    try {
+      System.out.println(cadena);
+      cadenaString = lector.readLine();
+    } catch (IOException e) {
+      System.out.println("Error al introducir la cadena");
+    }
+    return cadenaString;
+  }
+
+  // Introducir enteros
+  public static int introducirInteger(String cadena) {
+    int entero = 0;
+    String cadeString;
+    boolean ok;
+    do {
+      ok = true;
+      cadeString = introducirCadena(cadena);
+      try {
+        entero = Integer.parseInt(cadeString);
+      } catch (Exception e) {
+        System.out.println("No ha introducido un numero entero");
+        ok = false;
+      }
+    } while (!ok);
+    return entero;
+  }
+
+  // Introducir floats
+  public static float introducirFloat(String cadena) {
+    float decimal = 0;
+    String cadeString;
+    boolean ok;
+    do {
+      ok = true;
+      cadeString = introducirCadena(cadena);
+      try {
+        decimal = Float.parseFloat(cadeString);
+      } catch (Exception e) {
+        System.out.println("No ha introducido un numero decimal");
+        ok = false;
+      }
+    } while (!ok);
+    return decimal;
+  }
+
+  // Introducir Boleanos
+  public static boolean esBoolean(String message) {
+    String respuesta;
+    boolean ok;
+    do {
+      ok = true;
+      respuesta = introducirCadena(message);
+      if (!respuesta.equals("1") && !respuesta.equals("SI") && !respuesta.equals("NO")
+              && !respuesta.equals("0") && !respuesta.equals("true") && !respuesta.equals("false")) {
+        System.out.println("Respuesta incorrecta");
+        ok = false;
+      }
+    } while (!ok);
+    return !respuesta.equals("SI");
+  }
+
+  // Introducir Fechas
+  public static LocalDate introducirFecha(String cadena) {
+    LocalDate fecha = null;
+    String cadeString;
+    DateTimeFormatter formateador = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+    boolean ok;
+    do {
+      ok = true;
+      cadeString = introducirCadena(cadena);
+      try {
+        fecha = LocalDate.parse(cadeString, formateador);
+      } catch (Exception e) {
+        System.out.println("Formato de fecha incorrecto");
+        ok=false;
+      }
+    } while (!ok);
+    return fecha;
+  }
+
+  // Leer una respuesta
+  public static boolean introducirRespuesta(String message) {
+    String respu;
+    do {
+      respu = introducirCadena(message).toLowerCase();
+    } while (!respu.equals("0") && !respu.equals("1") && !respu.equals("si") && !respu.equals("no")
+        && !respu.equals("s") && !respu.equals("n") && !respu.equals("true") && !respu.equals("false"));
+    if (respu.equals("1") || respu.equals("si") || respu.equals("s") || respu.equals("true")) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  // leer int entre un rango
+  public static int introducirIntRango(int x, int y, String message) {
+    int num = 0;
+    boolean ok;
+    do {
+      try {
+        ok = true;
+        num = Integer.parseInt(introducirCadena(message));
+
+      } catch (NumberFormatException e) {
+        System.out.println("Hay que introducir numeros");
+        ok = false;
+        num = x;
+
+      }
+      if (num < x || num > y) {
+        System.out.println("Dato fuera de rango, introduce entre " + x + " y " + y);
+        ok = false;
+      }
+    } while (!ok);
+    return num;
+  }
+
+  // leer float entre un rango
+  public static float introducirFloatRango(float x, float y, String message) {
+    float fNumero = 0;
+    boolean ok;
+    do {
+      try {
+        ok = true;
+        fNumero = Float.parseFloat(introducirCadena(message));
+      } catch (NumberFormatException e) {
+        System.out.println("Hay que introducir numeros. Vuelve aintroducir: ");
+        ok = false;
+        fNumero = x;
+      }
+      if (fNumero < x || fNumero > y) {
+        System.out.println("Dato fuera de rando. Introduce entre " + x + " y " + y);
+        ok = false;
+      }
+    } while (!ok);
+    return fNumero;
+  }
+
+  // leer caracter
+  public static char introducirChar(String message) {
+    boolean error = false;
+    String letra;
+
+    do {
+      error = false;
+      letra = introducirCadena(message);
+      if (letra.length() != 1) {
+        System.out.println("Error, introduce un caracter: ");
+        error = true;
+      }
+
+    } while (error);
+    return letra.charAt(0);
+  }
+
+  public static char introducirCharArray(char caracteres[], String message) {
+    int i;
+    boolean error = false;
+    String letra;
+    char aux = 0;
+
+    do {
+      error = false;
+      letra = introducirCadena(message);
+      if (letra.length() != 1) {
+        System.out.println("Error, introduce un caracter: ");
+        error = true;
+      } else {
+        aux = letra.toUpperCase().charAt(0);
+        for (i = 0; i < caracteres.length; i++) {
+          if (Character.toUpperCase(caracteres[i]) == Character.toUpperCase(aux)) {
+            break;
+          }
+        }
+        if (i == caracteres.length) {
+          error = true;
+          System.out.println("Error, el caracter introducido no es valido. ");
+        }
+      }
+    } while (error);
+    return aux;
+  }
+
+  // Devuelve el n mero de objetos de un fichero
+  public static int calculoFichero(File fich) {
+    int cont = 0;
+    if (fich.exists()) {
+      FileInputStream fis = null;
+      ObjectInputStream ois = null;
+      try {
+        fis = new FileInputStream(fich);
+        ois = new ObjectInputStream(fis);
+
+        Object aux = ois.readObject();
+
+        while (aux != null) {
+          cont++;
+          aux = ois.readObject();
+        }
+      } catch (EOFException e1) {
+        System.out.println(" ");
+      } catch (Exception e2) {
+        e2.printStackTrace();
+      }
+      try {
+        ois.close();
+        fis.close();
+      } catch (IOException e) {
+        System.out.println("Error al cerrar los flujos");
+      }
+    }
+    return cont;
+  }
+
+
+
+
+  
+}
+
+y en vistaconsola.java tengo esto que cogi de otro trabajo pero hay que modificarlo:
+
+package utilidades;
+
+import java.io.BufferedReader;
+import java.io.EOFException;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.ObjectInputStream;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+
+public class Utilidades {
+  // Introducir cadenas de texto
+  public static String introducirCadena(String cadena) {
+    BufferedReader lector = new BufferedReader(new InputStreamReader(System.in));
+    String cadenaString = "";
+    try {
+      System.out.println(cadena);
+      cadenaString = lector.readLine();
+    } catch (IOException e) {
+      System.out.println("Error al introducir la cadena");
+    }
+    return cadenaString;
+  }
+
+  // Introducir enteros
+  public static int introducirInteger(String cadena) {
+    int entero = 0;
+    String cadeString;
+    boolean ok;
+    do {
+      ok = true;
+      cadeString = introducirCadena(cadena);
+      try {
+        entero = Integer.parseInt(cadeString);
+      } catch (Exception e) {
+        System.out.println("No ha introducido un numero entero");
+        ok = false;
+      }
+    } while (!ok);
+    return entero;
+  }
+
+  // Introducir floats
+  public static float introducirFloat(String cadena) {
+    float decimal = 0;
+    String cadeString;
+    boolean ok;
+    do {
+      ok = true;
+      cadeString = introducirCadena(cadena);
+      try {
+        decimal = Float.parseFloat(cadeString);
+      } catch (Exception e) {
+        System.out.println("No ha introducido un numero decimal");
+        ok = false;
+      }
+    } while (!ok);
+    return decimal;
+  }
+
+  // Introducir Boleanos
+  public static boolean esBoolean(String message) {
+    String respuesta;
+    boolean ok;
+    do {
+      ok = true;
+      respuesta = introducirCadena(message);
+      if (!respuesta.equals("1") && !respuesta.equals("SI") && !respuesta.equals("NO")
+              && !respuesta.equals("0") && !respuesta.equals("true") && !respuesta.equals("false")) {
+        System.out.println("Respuesta incorrecta");
+        ok = false;
+      }
+    } while (!ok);
+    return !respuesta.equals("SI");
+  }
+
+  // Introducir Fechas
+  public static LocalDate introducirFecha(String cadena) {
+    LocalDate fecha = null;
+    String cadeString;
+    DateTimeFormatter formateador = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+    boolean ok;
+    do {
+      ok = true;
+      cadeString = introducirCadena(cadena);
+      try {
+        fecha = LocalDate.parse(cadeString, formateador);
+      } catch (Exception e) {
+        System.out.println("Formato de fecha incorrecto");
+        ok=false;
+      }
+    } while (!ok);
+    return fecha;
+  }
+
+  // Leer una respuesta
+  public static boolean introducirRespuesta(String message) {
+    String respu;
+    do {
+      respu = introducirCadena(message).toLowerCase();
+    } while (!respu.equals("0") && !respu.equals("1") && !respu.equals("si") && !respu.equals("no")
+        && !respu.equals("s") && !respu.equals("n") && !respu.equals("true") && !respu.equals("false"));
+    if (respu.equals("1") || respu.equals("si") || respu.equals("s") || respu.equals("true")) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  // leer int entre un rango
+  public static int introducirIntRango(int x, int y, String message) {
+    int num = 0;
+    boolean ok;
+    do {
+      try {
+        ok = true;
+        num = Integer.parseInt(introducirCadena(message));
+
+      } catch (NumberFormatException e) {
+        System.out.println("Hay que introducir numeros");
+        ok = false;
+        num = x;
+
+      }
+      if (num < x || num > y) {
+        System.out.println("Dato fuera de rango, introduce entre " + x + " y " + y);
+        ok = false;
+      }
+    } while (!ok);
+    return num;
+  }
+
+  // leer float entre un rango
+  public static float introducirFloatRango(float x, float y, String message) {
+    float fNumero = 0;
+    boolean ok;
+    do {
+      try {
+        ok = true;
+        fNumero = Float.parseFloat(introducirCadena(message));
+      } catch (NumberFormatException e) {
+        System.out.println("Hay que introducir numeros. Vuelve aintroducir: ");
+        ok = false;
+        fNumero = x;
+      }
+      if (fNumero < x || fNumero > y) {
+        System.out.println("Dato fuera de rando. Introduce entre " + x + " y " + y);
+        ok = false;
+      }
+    } while (!ok);
+    return fNumero;
+  }
+
+  // leer caracter
+  public static char introducirChar(String message) {
+    boolean error = false;
+    String letra;
+
+    do {
+      error = false;
+      letra = introducirCadena(message);
+      if (letra.length() != 1) {
+        System.out.println("Error, introduce un caracter: ");
+        error = true;
+      }
+
+    } while (error);
+    return letra.charAt(0);
+  }
+
+  public static char introducirCharArray(char caracteres[], String message) {
+    int i;
+    boolean error = false;
+    String letra;
+    char aux = 0;
+
+    do {
+      error = false;
+      letra = introducirCadena(message);
+      if (letra.length() != 1) {
+        System.out.println("Error, introduce un caracter: ");
+        error = true;
+      } else {
+        aux = letra.toUpperCase().charAt(0);
+        for (i = 0; i < caracteres.length; i++) {
+          if (Character.toUpperCase(caracteres[i]) == Character.toUpperCase(aux)) {
+            break;
+          }
+        }
+        if (i == caracteres.length) {
+          error = true;
+          System.out.println("Error, el caracter introducido no es valido. ");
+        }
+      }
+    } while (error);
+    return aux;
+  }
+
+  // Devuelve el n mero de objetos de un fichero
+  public static int calculoFichero(File fich) {
+    int cont = 0;
+    if (fich.exists()) {
+      FileInputStream fis = null;
+      ObjectInputStream ois = null;
+      try {
+        fis = new FileInputStream(fich);
+        ois = new ObjectInputStream(fis);
+
+        Object aux = ois.readObject();
+
+        while (aux != null) {
+          cont++;
+          aux = ois.readObject();
+        }
+      } catch (EOFException e1) {
+        System.out.println(" ");
+      } catch (Exception e2) {
+        e2.printStackTrace();
+      }
+      try {
+        ois.close();
+        fis.close();
+      } catch (IOException e) {
+        System.out.println("Error al cerrar los flujos");
+      }
+    }
+    return cont;
+  }
+
+
+
+
+  
+}

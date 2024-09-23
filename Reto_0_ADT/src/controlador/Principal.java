@@ -18,6 +18,8 @@ public class Principal {
     public static void main(String[] args) throws SQLException {
         IDao dao = new ImplementacionDB();
         IVista vista = new VistaConsola(dao);
+        
+        vista.mostrarOpciones();
     }
 
 }

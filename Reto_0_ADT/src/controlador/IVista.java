@@ -24,4 +24,6 @@ public interface IVista {
     public void opcionVisualizaDocumento();
 
     public void opcionAsignarEnunciadoAConvocatoria();
+
+    public void mostrarOpciones();
 }
