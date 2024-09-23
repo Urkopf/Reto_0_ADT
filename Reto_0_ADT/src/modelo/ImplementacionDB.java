@@ -12,7 +12,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
@@ -148,7 +147,7 @@ public class ImplementacionDB implements IDao {
             declaracion.setInt(1, convocatoria.getIdConvocatoria());
             declaracion.setString(2, convocatoria.getConvocatoria());
             declaracion.setString(3, convocatoria.getDescripcion());
-            declaracion.setDate(4, Date.valueOf(convocatoria.getFecha()));
+            declaracion.setDate(4, java.sql.Date.valueOf(convocatoria.getFecha()));
             declaracion.setString(5, convocatoria.getCurso());
             declaracion.executeUpdate();
         } catch (SQLException e) {
