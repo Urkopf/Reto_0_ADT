@@ -168,7 +168,7 @@ public class VistaConsola implements IVista {
         });
         System.out.println("+------------------------------+");
         int idEnunciado = Utilidades.introducirInteger("Ingrese ID del Enunciado para ver en qu e convocatorias se usa:");
-        Map<Integer, Convocatoria> convocatorias = dao.consultaEnunciadoConvocatoria(idEnunciado);
+        Map<Integer, ConvocatoriaExamen> convocatorias = dao.consultaEnunciadoConvocatoria(idEnunciado);
         System.out.println("+------------------------------+");
         System.out.println("|   Enunciados de la Unidad    |");
         System.out.println("+------------------------------+");
