@@ -137,6 +137,19 @@ public class VistaConsola implements IVista {
 
         dao.insertarEnunciado(enunciado);
         System.out.println("Enunciado creado exitosamente.");
+
+        Map<Integer, UnidadDidactica> unidades = dao.cargarUnidadesDidacticas();
+        System.out.println("+------------------------------+");
+        System.out.println("|     Unidades Didácticas      |");
+        System.out.println("+------------------------------+");
+        unidades.values().forEach((unidad) -> {
+            System.out.println("| " + unidad);
+        });
+        System.out.println("+------------------------------+");
+        int idUnidad = Utilidades.introducirInteger("Ingrese ID de la unidad didáctica para asignarla al enunciado:");
+        dao.agregarUnidadEnunciado(enunciado.getIdEnunciado(), idUnidad);
+
+        opcionAsignarEnunciadoAConvocatoria(enunciado.getIdEnunciado());
     }
 
     @Override
@@ -223,6 +236,21 @@ public class VistaConsola implements IVista {
     @Override
     public void opcionAsignarEnunciadoAConvocatoria() {
         int idEnunciado = Utilidades.introducirInteger("Ingrese ID del enunciado:");
+        int idConvocatoria = Utilidades.introducirInteger("Ingrese ID de la convocatoria:");
+        dao.agregarConvocatoriaEnunciado(idEnunciado, idConvocatoria);
+        System.out.println("Enunciado asignado a la convocatoria exitosamente.");
+    }
+
+    @Override
+    public void opcionAsignarEnunciadoAConvocatoria(Integer idEnunciado) {
+        Map<Integer, ConvocatoriaExamen> convocatorias = dao.cargarConvocatoriasExamen();
+        System.out.println("+-------------------------------+");
+        System.out.println("|Convocatorias con ese enunciado|");
+        System.out.println("+-------------------------------+");
+        convocatorias.values().forEach((convocatoria) -> {
+            System.out.println("| " + convocatoria);
+        });
+        System.out.println("+-------------------------------+");
         int idConvocatoria = Utilidades.introducirInteger("Ingrese ID de la convocatoria:");
         dao.agregarConvocatoriaEnunciado(idEnunciado, idConvocatoria);
         System.out.println("Enunciado asignado a la convocatoria exitosamente.");

@@ -27,5 +27,7 @@ public interface IVista {
 
     public void opcionAsignarEnunciadoAConvocatoria();
 
+    public void opcionAsignarEnunciadoAConvocatoria(Integer idEnunciado);
+
     public void mostrarOpciones();
 }

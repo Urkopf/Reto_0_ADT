@@ -22,7 +22,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.ResourceBundle;
 import java.util.TreeMap;
 import utilidades.MyObjectOutputStream;
@@ -630,7 +629,7 @@ public class ImplementacionDB implements IDao {
 
     private void modificarFichero(ConvocatoriaExamen convocatoria) {
 
-        File fichAux = null;
+        File fichAux = new File("aux.obj");
         ConvocatoriaExamen nuevo = null;
         boolean encontrado = false;
         ObjectOutputStream oosAux = null;
@@ -643,7 +642,7 @@ public class ImplementacionDB implements IDao {
                 oosAux = new ObjectOutputStream(new FileOutputStream(fichAux));
                 while (true) {
                     nuevo = (ConvocatoriaExamen) ois.readObject();
-                    if (Objects.equals(nuevo.getIdConvocatoria(), convocatoria.getIdConvocatoria())) {
+                    if (nuevo.getIdConvocatoria() == convocatoria.getIdConvocatoria()) {
                         encontrado = true;
                         nuevo = convocatoria;
                     }
@@ -662,10 +661,16 @@ public class ImplementacionDB implements IDao {
                     oosAux.flush();
                     oosAux.close();
                     if (!encontrado) {
+                        fichAux.delete();
                         System.out.println("No encontrada la Convocatoria de Examen.");
+                        anadirAFichero(convocatoria);
                     } else {
-                        fich = fichAux;
+
+                        fich.delete();
+                        fichAux.renameTo(fich);
+
                     }
+
                 } catch (IOException e) {
                     // TODO Auto-generated catch block
                     e.printStackTrace();
