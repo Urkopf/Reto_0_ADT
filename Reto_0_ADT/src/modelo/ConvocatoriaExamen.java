@@ -1,15 +1,16 @@
 package modelo;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 
 /**
- * Esta clase representa una convocatoria de examen en el sistema.
- * Contiene la información relevante de la convocatoria, como su identificador,
- * descripción, fecha, curso y el enunciado asociado.
+ * Esta clase representa una convocatoria de examen en el sistema. Contiene la
+ * información relevante de la convocatoria, como su identificador, descripción,
+ * fecha, curso y el enunciado asociado.
  *
  * @author 2dam
  */
-public class ConvocatoriaExamen {
+public class ConvocatoriaExamen implements Serializable {
 
     // Atributos privados de la clase
     /**

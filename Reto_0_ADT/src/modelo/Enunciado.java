@@ -5,9 +5,8 @@ import java.util.List;
 
 /**
  * Esta clase representa un enunciado en el sistema. Contiene la información
- * relevante del enunciado, como su identificador, descripción, nivel de
- * dificultad, disponibilidad, ruta y listas de unidades y convocatorias
- * relacionadas.
+ * relevante del enunciado, como su identificador, descripción, nivel de nivel,
+ * disponibilidad, ruta y listas de unidades y convocatorias relacionadas.
  *
  * @author 2dam
  */
@@ -25,10 +24,10 @@ public class Enunciado {
     private String descripcion;
 
     /**
-     * El nivel de dificultad del enunciado. Este es un {@code Enum} que debe
-     * ser especificado.
+     * El nivel de nivel del enunciado. Este es un {@code Enum} que debe ser
+     * especificado.
      */
-    private Enum dificultad;
+    private Enum nivel;
 
     /**
      * Indica si el enunciado está disponible.
@@ -97,21 +96,22 @@ public class Enunciado {
     }
 
     /**
-     * Obtiene el nivel de dificultad del enunciado.
+     * Obtiene el nivel de nivel del enunciado.
      *
-     * @return El nivel de dificultad del enunciado.
+     * @return El nivel de nivel del enunciado.
      */
-    public Enum getDificultad() {
-        return dificultad;
+    public Enum getNivel() {
+        return nivel;
     }
 
     /**
-     * Establece el nivel de dificultad del enunciado.
+     * Establece el nivel de nivel del enunciado.
      *
-     * @param dificultad El nivel de dificultad a asignar.
+     * @param nivel) El nivel de nivel a asignar.
      */
-    public void setDificultad(Enum dificultad) {
-        this.dificultad = dificultad;
+    public void setNivel(Enum nivel) {
+        this.nivel = nivel;
+
     }
 
     /**
@@ -202,7 +202,7 @@ public class Enunciado {
         return "Enunciado{"
                 + "idEnunciado=" + idEnunciado
                 + ", descripcion='" + descripcion + '\''
-                + ", dificultad=" + dificultad
+                + ", nivel=" + nivel
                 + ", disponible=" + disponible
                 + ", ruta='" + ruta + '\''
                 + ", listaUnidades=" + listaUnidades

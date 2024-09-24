@@ -6,6 +6,14 @@
 package modelo;
 
 import controlador.IDao;
+import java.io.EOFException;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -14,8 +22,10 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.ResourceBundle;
 import java.util.TreeMap;
+import utilidades.MyObjectOutputStream;
 
 /**
  *
@@ -27,6 +37,8 @@ public class ImplementacionDB implements IDao {
     private String URL, DBROOT, DBROOTPASS;
     private Connection conexion;
     private PreparedStatement declaracion;
+
+    File fich = new File("ConvocatoriaExamenFich.obj");
 
     private final String CONSULTA_TODAS_UNIDADES = "SELECT * FROM UNIDADDIDACTICA";
     private final String INSERCION_UNIDAD = "INSERT INTO UNIDADDIDACTICA VALUES (?,?,?,?,?)";
@@ -41,6 +53,7 @@ public class ImplementacionDB implements IDao {
     private final String CONSULTA_CONVOCATORIAS_EXAMEN_DE_ENUNCIADO = "SELECT * FROM CONVOCATORIAEXAMEN WHERE ENUNCIADOSID = ?";
     private final String CONSULTA_ENUNCIADO_DE_UNIDAD = "SELECT * FROM UNIDADESDIDACICAS WHERE ID IN (SELECT UNIDADID FROM UNIDADENUNCIADO WHERE UNIDADID = ?)?";
     private final String UPDATE_CONVOCATORIA = "UPDATE CONVOCATORIAEXAMEN SET ENUNCIADOID = ? WHERE ID = ?";
+    private final String CONSULTA_CONVOCATORIA = "SELECT * FROM CONVOCATORIAEXAMEN WHERE ID = ?";
 
     public ImplementacionDB() {
         fichConf = ResourceBundle.getBundle("modelo.dbConfig");
@@ -68,7 +81,6 @@ public class ImplementacionDB implements IDao {
         }
     }
 
-   
     /**
      * Inserta una nueva unidad didáctica en la base de datos.
      *
@@ -102,6 +114,7 @@ public class ImplementacionDB implements IDao {
             closeConnection();
         }
     }
+
     /**
      * Inserta una nueva convocatoria de examen en la base de datos.
      *
@@ -132,12 +145,14 @@ public class ImplementacionDB implements IDao {
             declaracion.setDate(4, java.sql.Date.valueOf(convocatoria.getFecha()));
             declaracion.setString(5, convocatoria.getCurso());
             declaracion.executeUpdate();
+            anadirAFichero(convocatoria);
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
             closeConnection();
         }
     }
+
     /**
      * Inserta un nuevo enunciado en la base de datos.
      *
@@ -161,7 +176,7 @@ public class ImplementacionDB implements IDao {
             declaracion = conexion.prepareStatement(INSERCION_ENUNCIADO);
             declaracion.setInt(1, enunciado.getIdEnunciado());
             declaracion.setString(2, enunciado.getDescripcion());
-            declaracion.setString(3, String.valueOf(enunciado.getDificultad()));
+            declaracion.setString(3, String.valueOf(enunciado.getNivel()));
             declaracion.setBoolean(4, enunciado.getDisponible());
             declaracion.setString(5, enunciado.getRuta());
             declaracion.executeUpdate();
@@ -171,6 +186,7 @@ public class ImplementacionDB implements IDao {
             closeConnection();
         }
     }
+
     /**
      * Carga todas las unidades didácticas desde la base de datos y las devuelve
      * en un mapa.
@@ -265,7 +281,7 @@ public class ImplementacionDB implements IDao {
                 // Asignamos los valores del ResultSet al objeto Enunciado
                 enunciado.setIdEnunciado(resultado.getInt("ID"));
                 enunciado.setDescripcion(resultado.getString("DESCRIPCION"));
-                enunciado.setDificultad(Dificultad.convertirStringEnum(resultado.getString("DIFICULTAD")));
+                enunciado.setNivel(Dificultad.convertirStringEnum(resultado.getString("NIVEL")));
                 enunciado.setRuta(resultado.getString("RUTA"));
 
                 // Cargamos las unidades asociadas al enunciado
@@ -325,7 +341,7 @@ public class ImplementacionDB implements IDao {
                 convocatoria.setDescripcion(resultado.getString("DESCRIPCION"));
                 convocatoria.setFecha(resultado.getDate("FECHA").toLocalDate());
                 convocatoria.setCurso(resultado.getString("CURSO"));
-                convocatoria.setIdEnunciado(resultado.getInt("IDENUNCIADO"));
+                convocatoria.setIdEnunciado(resultado.getInt("ENUNCIADOID"));
 
                 // Añadimos la convocatoria al TreeMap
                 lista.put(convocatoria.getIdConvocatoria(), convocatoria);
@@ -381,7 +397,7 @@ public class ImplementacionDB implements IDao {
                 convocatoria.setDescripcion(resultado.getString("DESCRIPCION"));
                 convocatoria.setFecha(resultado.getDate("FECHA").toLocalDate());
                 convocatoria.setCurso(resultado.getString("CURSO"));
-                convocatoria.setIdEnunciado(resultado.getInt("IDENUNCIADO"));
+                convocatoria.setIdEnunciado(resultado.getInt("ENUNCIADOID"));
 
                 // Añadimos la convocatoria al TreeMap
                 lista.put(convocatoria.getIdConvocatoria(), convocatoria);
@@ -397,6 +413,49 @@ public class ImplementacionDB implements IDao {
 
         // Devolvemos el TreeMap con las convocatorias
         return lista;
+    }
+
+    public ConvocatoriaExamen consultaConvocatoria(Integer idConvocatoria) {
+        ConvocatoriaExamen convocatoria = null;
+        TreeMap<Integer, ConvocatoriaExamen> lista = new TreeMap<>();
+        ResultSet resultado;
+
+        try {
+            // Abrimos la conexión con la base de datos
+            openConnection();
+
+            // Preparamos la consulta para obtener las convocatorias del enunciado
+            declaracion = conexion.prepareStatement(CONSULTA_CONVOCATORIA);
+
+            // Asignamos el valor del parámetro idEnunciado
+            declaracion.setInt(1, idConvocatoria);
+
+            // Ejecutamos la consulta y obtenemos el resultado
+            resultado = declaracion.executeQuery();
+
+            // Recorremos los resultados de la consulta
+            while (resultado.next()) {
+                convocatoria = new ConvocatoriaExamen();
+
+                // Asignamos los valores del ResultSet al objeto ConvocatoriaExamen
+                convocatoria.setIdConvocatoria(resultado.getInt("ID"));
+                convocatoria.setConvocatoria(resultado.getString("CONVOCATORIA"));
+                convocatoria.setDescripcion(resultado.getString("DESCRIPCION"));
+                convocatoria.setFecha(resultado.getDate("FECHA").toLocalDate());
+                convocatoria.setCurso(resultado.getString("CURSO"));
+                convocatoria.setIdEnunciado(resultado.getInt("ENUNCIADOID"));
+            }
+
+        } catch (SQLException evento) {
+            // Manejamos la excepción en caso de fallo en la consulta
+            evento.printStackTrace();
+        } finally {
+            // Cerramos la conexión con la base de datos
+            closeConnection();
+        }
+
+        // Devolvemos el TreeMap con las convocatorias
+        return convocatoria;
     }
 
     /**
@@ -422,7 +481,7 @@ public class ImplementacionDB implements IDao {
 
             // Ejecutamos la actualización
             declaracion.executeUpdate();
-
+            modificarFichero(consultaConvocatoria(idConvocatoria));
         } catch (SQLException e) {
             // Manejamos la excepción en caso de fallo en la actualización
             e.printStackTrace();
@@ -507,12 +566,12 @@ public class ImplementacionDB implements IDao {
 
             // Recorremos los resultados de la consulta
             while (resultado.next()) {
-             enunciado = new Enunciado();
+                enunciado = new Enunciado();
 
                 // Asignamos los valores del ResultSet al objeto Enunciado
                 enunciado.setIdEnunciado(resultado.getInt("ID"));
                 enunciado.setDescripcion(resultado.getString("DESCRIPCION"));
-                enunciado.setDificultad(Dificultad.convertirStringEnum(resultado.getString("DIFICULTAD")));
+                enunciado.setNivel(Dificultad.convertirStringEnum(resultado.getString("NIVEL")));
                 enunciado.setRuta(resultado.getString("RUTA"));
 
                 // Cargamos las unidades asociadas al enunciado
@@ -535,5 +594,87 @@ public class ImplementacionDB implements IDao {
 
         // Devolvemos el TreeMap con las convocatorias
         return lista;
+    }
+
+    private void anadirAFichero(ConvocatoriaExamen nuevo) {
+
+        ObjectOutputStream oos = null;
+
+        try {
+            if (fich.exists()) {
+                oos = new MyObjectOutputStream(new FileOutputStream(fich, true));
+            } else {
+                oos = new ObjectOutputStream(new FileOutputStream(fich));
+            }
+
+            oos.writeObject(nuevo);
+
+        } catch (FileNotFoundException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } finally {
+            try {
+                oos.flush();
+                oos.close();
+            } catch (IOException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        }
+
+    }
+
+    private void modificarFichero(ConvocatoriaExamen convocatoria) {
+
+        File fichAux = null;
+        ConvocatoriaExamen nuevo = null;
+        boolean encontrado = false;
+        ObjectOutputStream oosAux = null;
+        ObjectInputStream ois = null;
+
+        if (fich.exists()) {
+
+            try {
+                ois = new ObjectInputStream(new FileInputStream(fich));
+                oosAux = new ObjectOutputStream(new FileOutputStream(fichAux));
+                while (true) {
+                    nuevo = (ConvocatoriaExamen) ois.readObject();
+                    if (Objects.equals(nuevo.getIdConvocatoria(), convocatoria.getIdConvocatoria())) {
+                        encontrado = true;
+                        nuevo = convocatoria;
+                    }
+                    oosAux.writeObject(nuevo);
+                }
+
+            } catch (EOFException e) {
+                System.out.println("Fin de fichero.");
+            } catch (FileNotFoundException | ClassNotFoundException e) {
+                System.out.println("Fichero o clase no encontrada.");
+            } catch (IOException e) {
+                System.out.println("Error.");
+            } finally {
+                try {
+                    ois.close();
+                    oosAux.flush();
+                    oosAux.close();
+                    if (!encontrado) {
+                        System.out.println("No encontrada la Convocatoria de Examen.");
+                    } else {
+                        fich = fichAux;
+                    }
+                } catch (IOException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+            }
+
+        } else {
+
+            anadirAFichero(convocatoria);
+        }
+
     }
 }
