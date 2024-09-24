@@ -81,4 +81,17 @@ public interface IDao {
      * @param idConvocatoria El identificador de la convocatoria a asociar.
      */
     public void agregarConvocatoriaEnunciado(Integer idEnunciado, Integer idConvocatoria);
+
+    /**
+     * Asocia una unidad con un enunciado específico. Este método agrega una
+     * relación entre un enunciado identificado por y una unidad identificada
+     * por. Se espera que ambos parámetros sean enteros no nulos y válidos.
+     *
+     * @param idenunciado el identificador único del enunciado que se desea
+     * asociar con la unidad.
+     * @param idunidad el identificador único de la unidad que se asociará al
+     * enunciado.
+     */
+    public void agregarUnidadEnunciado(Integer idenunciado, Integer idunidad);
+
 }
