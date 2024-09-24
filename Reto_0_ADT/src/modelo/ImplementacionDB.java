@@ -32,6 +32,7 @@ public class ImplementacionDB implements IDao {
     private final String INSERCION_UNIDAD = "INSERT INTO UNIDADDIDACTICA VALUES (?,?,?,?,?)";
     private final String INSERCION_CONVOCATORIA = "INSERT INTO CONVOCATORIAEXAMEN(ID,CONVOCATORIA,DESCRIPCION,FECHA,CURSO) VALUES(?,?,?,?,?)";
     private final String INSERCION_ENUNCIADO = "INSERT INTO ENUNCIADO VALUES(?,?,?,?,?)";
+    private final String INSERCION_UNIDADENUNCIADO = "INSERT INTO UNIDADENUNCIADO VALUES (?,?)";
 
     private final String CONSULTA_TODOS_ENUNCIADOS = "SELECT * FROM ENUNCIADO";
     private final String CONSULTA_LISTA_IDS_UNIDADES_DE_ENUNCIADO = "SELECT UNIDADID AS ID FROM UNIDADENUNCIADO WHERE ENUNCIADOID = ?";
@@ -535,5 +536,21 @@ public class ImplementacionDB implements IDao {
 
         // Devolvemos el TreeMap con las convocatorias
         return lista;
+    }
+
+    @Override
+    public void agregarUnidadEnunciado(Integer idenunciado, Integer idunidad) {
+        try {
+            openConnection();
+            //Preparamos la insercion con la sql de arriba
+            declaracion = conexion.prepareStatement(INSERCION_UNIDADENUNCIADO);
+            declaracion.setInt(1, idunidad);
+            declaracion.setInt(2, idenunciado);
+            declaracion.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            closeConnection();
+        }
     }
 }
