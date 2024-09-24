@@ -676,7 +676,7 @@ public class ImplementacionDB implements IDao {
 
             anadirAFichero(convocatoria);
         }
-
+    }
 
     @Override
     public void agregarUnidadEnunciado(Integer idenunciado, Integer idunidad) {
