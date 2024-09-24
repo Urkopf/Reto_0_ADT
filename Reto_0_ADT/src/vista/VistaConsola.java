@@ -2,6 +2,9 @@ package vista;
 
 import controlador.IDao;
 import controlador.IVista;
+import java.awt.Desktop;
+import java.io.File;
+import java.io.IOException;
 import java.util.Map;
 import modelo.ConvocatoriaExamen;
 import modelo.Dificultad;
@@ -127,7 +130,7 @@ public class VistaConsola implements IVista {
             System.out.println("Dificultad no válida. Se establecerá a BAJA por defecto.");
             dificultad = Dificultad.BAJA; // Asignar un valor por defecto si es necesario
         }
-        enunciado.setDificultad(dificultad);
+        enunciado.setNivel(dificultad);
 
         enunciado.setDisponible(Utilidades.introducirRespuesta("¿Está disponible? (1: Sí, 0: No)"));
         enunciado.setRuta(Utilidades.introducirCadena("Ingrese la ruta del documento:"));
@@ -167,23 +170,54 @@ public class VistaConsola implements IVista {
             System.out.println("| " + enunciado);
         });
         System.out.println("+------------------------------+");
-        int idEnunciado = Utilidades.introducirInteger("Ingrese ID del Enunciado para ver en qu e convocatorias se usa:");
+        int idEnunciado = Utilidades.introducirInteger("Ingrese ID del Enunciado para ver en que convocatorias se usa:");
         Map<Integer, ConvocatoriaExamen> convocatorias = dao.consultaEnunciadoConvocatoria(idEnunciado);
-        System.out.println("+------------------------------+");
-        System.out.println("|   Enunciados de la Unidad    |");
-        System.out.println("+------------------------------+");
+        System.out.println("+-------------------------------+");
+        System.out.println("|Convocatorias con ese enunciado|");
+        System.out.println("+-------------------------------+");
         convocatorias.values().forEach((convocatoria) -> {
             System.out.println("| " + convocatoria);
         });
-        System.out.println("+------------------------------+");
+        System.out.println("+-------------------------------+");
     }
 
     @Override
     public void opcionVisualizaDocumento() {
-        String rutaDocumento = Utilidades.introducirCadena("Ingrese la ruta del documento:");
-        // Lógica para visualizar el documento (puede ser abrirlo, leerlo, etc.)
-        System.out.println("Visualizando documento en: " + rutaDocumento);
-        // Asegúrate de manejar excepciones y validar la ruta
+        Map<Integer, Enunciado> listaEnunciados = dao.cargarEnunciados();
+        Map<Integer, ConvocatoriaExamen> listaConvocatorias = dao.cargarConvocatoriasExamen();
+        System.out.println("+-------------------------------+");
+        System.out.println("|   Convocatorias Disponibles   |");
+        System.out.println("+-------------------------------+");
+        listaConvocatorias.values().forEach((convocatoria) -> {
+            System.out.println("| " + convocatoria);
+        });
+        System.out.println("+------------------------------+");
+        int idConvocatoria = Utilidades.introducirInteger("Ingrese ID del la Convocatoria:");
+
+        // Obtenemos la ruta del archivo a partir del enunciado de la convocatoria seleccionada
+        String rutaArchivo = listaEnunciados.get(listaConvocatorias.get(idConvocatoria).getIdEnunciado()).getRuta();
+        // Creamos un ProcessBuilder para abrir el archivo con la aplicación predeterminada del sistema
+        if (rutaArchivo != null && !rutaArchivo.isEmpty()) {
+            File archivo = new File(rutaArchivo);
+
+            if (archivo.exists()) {
+                try {
+                    if (Desktop.isDesktopSupported()) {
+                        Desktop.getDesktop().open(archivo);  // Abre el archivo con la aplicación predeterminada
+                        System.out.println("Abriendo el archivo: " + rutaArchivo);
+                    } else {
+                        System.out.println("La funcionalidad de escritorio no está soportada en este sistema.");
+                    }
+                } catch (IOException e) {
+                    System.out.println("Error al intentar abrir el archivo.");
+                    e.printStackTrace();
+                }
+            } else {
+                System.out.println("El archivo no existe en la ruta especificada: " + rutaArchivo);
+            }
+        } else {
+            System.out.println("No se encontró una ruta válida para la convocatoria seleccionada.");
+        }
     }
 
     @Override
