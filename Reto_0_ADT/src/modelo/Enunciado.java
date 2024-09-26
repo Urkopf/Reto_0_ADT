@@ -27,7 +27,7 @@ public class Enunciado {
      * El nivel de nivel del enunciado. Este es un {@code Enum} que debe ser
      * especificado.
      */
-    private Enum nivel;
+    private Dificultad nivel;
 
     /**
      * Indica si el enunciado está disponible.
@@ -100,7 +100,7 @@ public class Enunciado {
      *
      * @return El nivel de nivel del enunciado.
      */
-    public Enum getNivel() {
+    public Dificultad getNivel() {
         return nivel;
     }
 
@@ -109,7 +109,7 @@ public class Enunciado {
      *
      * @param nivel) El nivel de nivel a asignar.
      */
-    public void setNivel(Enum nivel) {
+    public void setNivel(Dificultad nivel) {
         this.nivel = nivel;
 
     }

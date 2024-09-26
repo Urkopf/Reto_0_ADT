@@ -50,8 +50,10 @@ public class ImplementacionDB implements IDao {
     private final String CONSULTA_LISTA_IDS_CONVOCATORIAS_DE_ENUNCIADO = "SELECT ID FROM CONVOCATORIAEXAMEN WHERE ENUNCIADOID = ?";
     private final String CONSULTA_LISTA_IDS_ENUNCIADOS_DE_UNIDAD = "SELECT ENUNCIADOID  AS ID FROM UNIDADENUNCIADO WHERE UNIDADID = ?";
     private final String CONSULTA_TODAS_CONVOCATORIAS_EXAMEN = "SELECT * FROM CONVOCATORIAEXAMEN";
-    private final String CONSULTA_CONVOCATORIAS_EXAMEN_DE_ENUNCIADO = "SELECT * FROM CONVOCATORIAEXAMEN WHERE ENUNCIADOSID = ?";
-    private final String CONSULTA_ENUNCIADO_DE_UNIDAD = "SELECT * FROM UNIDADESDIDACICAS WHERE ID IN (SELECT UNIDADID FROM UNIDADENUNCIADO WHERE UNIDADID = ?)?";
+    private final String CONSULTA_CONVOCATORIAS_EXAMEN_DE_ENUNCIADO = "SELECT * FROM CONVOCATORIAEXAMEN WHERE ENUNCIADOID = ?";
+
+    private final String CONSULTA_ENUNCIADO_DE_UNIDAD = "SELECT * FROM ENUNCIADO WHERE ID IN (SELECT ENUNCIADOID FROM UNIDADENUNCIADO WHERE UNIDADID = ?)";
+
     private final String UPDATE_CONVOCATORIA = "UPDATE CONVOCATORIAEXAMEN SET ENUNCIADOID = ? WHERE ID = ?";
     private final String CONSULTA_CONVOCATORIA = "SELECT * FROM CONVOCATORIAEXAMEN WHERE ID = ?";
 
@@ -277,7 +279,6 @@ public class ImplementacionDB implements IDao {
             // Recorremos los resultados de la consulta
             while (resultado.next()) {
                 enunciado = new Enunciado();
-
                 // Asignamos los valores del ResultSet al objeto Enunciado
                 enunciado.setIdEnunciado(resultado.getInt("ID"));
                 enunciado.setDescripcion(resultado.getString("DESCRIPCION"));
@@ -662,7 +663,7 @@ public class ImplementacionDB implements IDao {
                     oosAux.close();
                     if (!encontrado) {
                         fichAux.delete();
-                        System.out.println("No encontrada la Convocatoria de Examen.");
+                        System.out.println("No encontrada la Convocatoria de Examen y se va agregar.");
                         anadirAFichero(convocatoria);
                     } else {
 

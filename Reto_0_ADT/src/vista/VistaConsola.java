@@ -133,7 +133,7 @@ public class VistaConsola implements IVista {
         enunciado.setNivel(dificultad);
 
         enunciado.setDisponible(Utilidades.introducirRespuesta("¿Está disponible? (1: Sí, 0: No)"));
-        enunciado.setRuta(Utilidades.introducirCadena("Ingrese la ruta del documento:"));
+        enunciado.setRuta(Utilidades.introducirCadena("Ingrese la ruta del documento (Ejem.: doc/nombreDocumento.docx):"));
 
         dao.insertarEnunciado(enunciado);
         System.out.println("Enunciado creado exitosamente.");
