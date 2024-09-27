@@ -11,10 +11,9 @@ package modelo;
  */
 public enum Dificultad {
     ALTA, MEDIA, BAJA;
-    
-    
-    public static Dificultad convertirStringEnum(String texto) {
-		return Dificultad.valueOf(texto);
-	}
-}
 
+    //Convertir String en el Enum Correspondiente
+    public static Dificultad convertirStringEnum(String texto) {
+        return Dificultad.valueOf(texto);
+    }
+}

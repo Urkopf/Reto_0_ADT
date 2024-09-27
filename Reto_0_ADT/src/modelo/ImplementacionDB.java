@@ -57,6 +57,7 @@ public class ImplementacionDB implements IDao {
     private final String UPDATE_CONVOCATORIA = "UPDATE CONVOCATORIAEXAMEN SET ENUNCIADOID = ? WHERE ID = ?";
     private final String CONSULTA_CONVOCATORIA = "SELECT * FROM CONVOCATORIAEXAMEN WHERE ID = ?";
 
+    //Definir las propiedades de la BD
     public ImplementacionDB() {
         fichConf = ResourceBundle.getBundle("modelo.dbConfig");
         URL = fichConf.getString("URL");
@@ -64,12 +65,14 @@ public class ImplementacionDB implements IDao {
         DBROOTPASS = fichConf.getString("DBROOTPASS");
     }
 
+    //Abrir conexion
     private void openConnection() throws SQLException {
 
         conexion = DriverManager.getConnection(URL, DBROOT, DBROOTPASS);
 
     }
 
+    //Cerrar conexion
     private void closeConnection() {
         try {
             if (declaracion != null) {
@@ -597,55 +600,71 @@ public class ImplementacionDB implements IDao {
         return lista;
     }
 
+    /**
+     * Añade un nuevo objeto ConvocatoriaExamen al fichero especificado.
+     *
+     * @param nuevo El objeto ConvocatoriaExamen que se va a añadir al fichero.
+     */
     private void anadirAFichero(ConvocatoriaExamen nuevo) {
-
         ObjectOutputStream oos = null;
 
         try {
+            // Verificamos si el fichero ya existe para abrirlo en modo de append
             if (fich.exists()) {
                 oos = new MyObjectOutputStream(new FileOutputStream(fich, true));
             } else {
                 oos = new ObjectOutputStream(new FileOutputStream(fich));
             }
 
+            // Escribimos el nuevo objeto en el fichero
             oos.writeObject(nuevo);
 
         } catch (FileNotFoundException e) {
-            // TODO Auto-generated catch block
+            // Manejo de excepciones si el fichero no se encuentra
             e.printStackTrace();
         } catch (IOException e) {
-            // TODO Auto-generated catch block
+            // Manejo de excepciones de entrada/salida
             e.printStackTrace();
         } finally {
             try {
+                // Aseguramos que el stream se cierra correctamente
                 oos.flush();
                 oos.close();
             } catch (IOException e) {
-                // TODO Auto-generated catch block
+                // Manejo de excepciones al cerrar el stream
                 e.printStackTrace();
             }
         }
-
     }
 
+    /**
+     * Modifica un objeto ConvocatoriaExamen en el fichero, reemplazándolo por
+     * uno nuevo si su ID coincide.
+     *
+     * @param convocatoria El objeto ConvocatoriaExamen que se utilizará para la
+     * modificación.
+     */
     private void modificarFichero(ConvocatoriaExamen convocatoria) {
-
         File fichAux = new File("aux.obj");
         ConvocatoriaExamen nuevo = null;
         boolean encontrado = false;
         ObjectOutputStream oosAux = null;
         ObjectInputStream ois = null;
 
+        // Comprobamos si el fichero original existe
         if (fich.exists()) {
-
             try {
+                // Abrimos los streams para leer y escribir
                 ois = new ObjectInputStream(new FileInputStream(fich));
                 oosAux = new ObjectOutputStream(new FileOutputStream(fichAux));
+
+                // Leemos objetos del fichero original hasta el final
                 while (true) {
                     nuevo = (ConvocatoriaExamen) ois.readObject();
+                    // Comprobamos si el ID coincide con el de la convocatoria que se quiere modificar
                     if (nuevo.getIdConvocatoria() == convocatoria.getIdConvocatoria()) {
                         encontrado = true;
-                        nuevo = convocatoria;
+                        nuevo = convocatoria; // Reemplazamos el objeto
                     }
                     oosAux.writeObject(nuevo);
                 }
@@ -658,46 +677,53 @@ public class ImplementacionDB implements IDao {
                 System.out.println("Error.");
             } finally {
                 try {
+                    // Cerramos los streams y gestionamos el fichero auxiliar
                     ois.close();
                     oosAux.flush();
                     oosAux.close();
                     if (!encontrado) {
-                        fichAux.delete();
+                        fichAux.delete(); // Eliminamos el fichero auxiliar si no se encontró la convocatoria
                         System.out.println("No encontrada la Convocatoria de Examen y se va agregar.");
-                        anadirAFichero(convocatoria);
+                        anadirAFichero(convocatoria); // Añadimos la nueva convocatoria
                     } else {
-
-                        fich.delete();
+                        fich.delete(); // Reemplazamos el fichero original con el auxiliar
                         fichAux.renameTo(fich);
-
                     }
 
                 } catch (IOException e) {
-                    // TODO Auto-generated catch block
+                    // Manejo de excepciones al cerrar streams
                     e.printStackTrace();
                 }
             }
 
         } else {
-
+            // Si el fichero no existe, añadimos la convocatoria
             anadirAFichero(convocatoria);
         }
     }
 
+    /**
+     * Agrega una relación entre una unidad didáctica y un enunciado en la base
+     * de datos.
+     *
+     * @param idenunciado El ID del enunciado que se va a relacionar.
+     * @param idunidad El ID de la unidad didáctica que se va a relacionar.
+     */
     @Override
     public void agregarUnidadEnunciado(Integer idenunciado, Integer idunidad) {
         try {
-            openConnection();
-            //Preparamos la insercion con la sql de arriba
+            openConnection(); // Abrimos la conexión a la base de datos
+            // Preparamos la inserción utilizando la SQL definida previamente
             declaracion = conexion.prepareStatement(INSERCION_UNIDADENUNCIADO);
             declaracion.setInt(1, idunidad);
             declaracion.setInt(2, idenunciado);
-            declaracion.executeUpdate();
+            declaracion.executeUpdate(); // Ejecutamos la inserción
         } catch (SQLException e) {
+            // Manejo de excepciones SQL
             e.printStackTrace();
         } finally {
-            closeConnection();
+            closeConnection(); // Cerramos la conexión a la base de datos
         }
-
     }
+
 }

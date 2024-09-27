@@ -12,14 +12,27 @@ import modelo.Enunciado;
 import modelo.UnidadDidactica;
 import utilidades.Utilidades;
 
+/**
+ * Clase que representa la vista de consola para la gestión de Unidades
+ * Didácticas, Convocatorias de Examen y Enunciados.
+ */
 public class VistaConsola implements IVista {
 
     private IDao dao;
 
+    /**
+     * Constructor de la clase VistaConsola.
+     *
+     * @param dao Objeto que implementa la interfaz IDao para la gestión de
+     * datos.
+     */
     public VistaConsola(IDao dao) {
         this.dao = dao;
     }
 
+    /**
+     * Muestra el menú principal de la aplicación.
+     */
     @Override
     public void visualizaMenu() {
         System.out.println("+------------------------------+");
@@ -37,6 +50,9 @@ public class VistaConsola implements IVista {
         System.out.println("+------------------------------+");
     }
 
+    /**
+     * Muestra las opciones del menú y maneja la selección del usuario.
+     */
     @Override
     public void mostrarOpciones() {
         int opcion;
@@ -78,6 +94,9 @@ public class VistaConsola implements IVista {
         } while (opcion != 0);
     }
 
+    /**
+     * Permite al usuario crear una nueva Unidad Didáctica.
+     */
     @Override
     public void crearUnidadDidactica() {
         UnidadDidactica unidad = new UnidadDidactica();
@@ -91,6 +110,9 @@ public class VistaConsola implements IVista {
         System.out.println("Unidad Didáctica creada exitosamente.");
     }
 
+    /**
+     * Consulta y muestra todas las Unidades Didácticas existentes.
+     */
     private void consultarUnidadesDidacticas() {
         Map<Integer, UnidadDidactica> unidades = dao.cargarUnidadesDidacticas();
         System.out.println("+------------------------------+");
@@ -102,6 +124,9 @@ public class VistaConsola implements IVista {
         System.out.println("+------------------------------+");
     }
 
+    /**
+     * Permite al usuario crear una nueva Convocatoria de Examen.
+     */
     @Override
     public void opcionCrearConvocatoria() {
         ConvocatoriaExamen convocatoria = new ConvocatoriaExamen();
@@ -115,6 +140,9 @@ public class VistaConsola implements IVista {
         System.out.println("Convocatoria creada exitosamente.");
     }
 
+    /**
+     * Permite al usuario crear un nuevo Enunciado.
+     */
     @Override
     public void opcionCrearEnunciado() {
         Enunciado enunciado = new Enunciado();
@@ -152,11 +180,15 @@ public class VistaConsola implements IVista {
         opcionAsignarEnunciadoAConvocatoria(enunciado.getIdEnunciado());
     }
 
+    /**
+     * Consulta y muestra los enunciados asociados a una Unidad Didáctica
+     * específica.
+     */
     @Override
     public void opcionConsultaEnunciadosDeUnidad() {
         Map<Integer, UnidadDidactica> unidades = dao.cargarUnidadesDidacticas();
         System.out.println("+---------------------------------+");
-        System.out.println("| Unidades didacticas Disponibles |");
+        System.out.println("| Unidades didácticas Disponibles |");
         System.out.println("+---------------------------------+");
         unidades.values().forEach((unidad) -> {
             System.out.println("| " + unidad);
@@ -173,6 +205,10 @@ public class VistaConsola implements IVista {
         System.out.println("+------------------------------+");
     }
 
+    /**
+     * Consulta y muestra las Convocatorias de Examen asociadas a un Enunciado
+     * específico.
+     */
     @Override
     public void opcionConsultaConvocatoriasConEnunciado() {
         Map<Integer, Enunciado> enunciados = dao.cargarEnunciados();
@@ -194,6 +230,10 @@ public class VistaConsola implements IVista {
         System.out.println("+-------------------------------+");
     }
 
+    /**
+     * Visualiza un documento asociado a un Enunciado de una Convocatoria
+     * específica.
+     */
     @Override
     public void opcionVisualizaDocumento() {
         Map<Integer, Enunciado> listaEnunciados = dao.cargarEnunciados();
@@ -233,6 +273,9 @@ public class VistaConsola implements IVista {
         }
     }
 
+    /**
+     * Asigna un Enunciado a una Convocatoria de Examen.
+     */
     @Override
     public void opcionAsignarEnunciadoAConvocatoria() {
         int idEnunciado = Utilidades.introducirInteger("Ingrese ID del enunciado:");
@@ -241,6 +284,12 @@ public class VistaConsola implements IVista {
         System.out.println("Enunciado asignado a la convocatoria exitosamente.");
     }
 
+    /**
+     * Asigna un Enunciado a una Convocatoria de Examen, dado el ID del
+     * Enunciado.
+     *
+     * @param idEnunciado ID del enunciado a asignar.
+     */
     @Override
     public void opcionAsignarEnunciadoAConvocatoria(Integer idEnunciado) {
         Map<Integer, ConvocatoriaExamen> convocatorias = dao.cargarConvocatoriasExamen();
